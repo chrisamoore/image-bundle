@@ -4,6 +4,8 @@ namespace Uecode\Bundle\ImageBundle\Controller;
 use Aws\S3\Exception\S3Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 class UploaderController extends Controller{
 
@@ -11,31 +13,52 @@ class UploaderController extends Controller{
 
     public $fileName;
 
+    public $fs;
+
     protected $path;
     protected $name;
     protected $stuff;
 
-    protected function __construct()
+    public function uploadAction()
     {
+        $this->request = $this->container->get('request');
+
+        $this->file = $this->request->files->get('files')[0];
+        $this->fs = new Filesystem();
+
+        $this->path = $this->request->server->get('DOCUMENT_ROOT');
         $this->tmp_dir = $this->container->getParameter('uecode_image.tmp_dir');
         $this->upload_dir = $this->container->getParameter('uecode_image.upload_dir');
-    }
 
-    public function upload()
-    {
-        $request = $this->container->get('request');
-        $this->file = $request->files->get('file');
-        $this->operations = $request->request->get('operations');
-        $this->fileName = 'filename';
+        $this->makeDir($this->path . DIRECTORY_SEPARATOR . $this->upload_dir);
+        $this->makeDir($this->path . DIRECTORY_SEPARATOR . $this->tmp_dir);
+
         // move to tmp dir
-        $this->moveToFileSystem($this->file);
+        $this->moveToFileSystem($this->path . DIRECTORY_SEPARATOR . $this->tmp_dir, $this->file);
+        dd($this->moveToFileSystem($this->path . DIRECTORY_SEPARATOR . $this->upload_dir, $this->file));
+
         // If S3
-        $this->handleS3Upload($this->file, $request);
+//        $this->handleS3Upload($this->file, $this->request);
     }
 
-    protected function moveToFileSystem($file)
+    protected function moveToFileSystem($path, $file, $filename = null)
     {
+        $name = (!$filename) ? $file->getClientOriginalName() : $filename;
 
+        $this->fs->copy($file, $path . DIRECTORY_SEPARATOR . $name);
+        $web = explode('web/', $path);
+
+        return 'http://' . $this->request->getHost() . $web[1] . DIRECTORY_SEPARATOR . $name;
+    }
+
+    protected function makeDir($dir)
+    {
+        if(!$this->fs->exists($dir))
+            try {
+                $this->fs->mkdir($dir);
+            } catch (IOException $e) {
+                echo "An error occurred while creating your directory";
+            }
     }
 
     protected function initS3()
@@ -44,7 +67,7 @@ class UploaderController extends Controller{
         $this->bucket = $this->container->getParameter('aws.s3.bucket');
         $this->directory = $this->container->getParameter('aws.s3.directory');
         $this->baseUrl = 'https://s3.amazonaws.com/';
-        $this->location .= $this->bucket . '/' . $this->directory . '/';
+        $this->location .= $this->bucket . DIRECTORY_SEPARATOR . $this->directory . DIRECTORY_SEPARATOR;
     }
 
     protected function handleS3Upload($filepath, Request $request)

@@ -1,6 +1,6 @@
 services:
     uecode_image.routing_loader:
         class: Uecode\Bundle\ImageBundle\Routing\RouteLoader
-        arguments: ['upload', 'Uecode\Bundle\ImageBundle\Controller\UploaderController']
+        arguments: [ 'upload' , 'UecodeImageBundle:Uploader:Upload']
         tags:
             - { name: routing.loader }

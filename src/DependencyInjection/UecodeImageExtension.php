@@ -28,7 +28,10 @@ class UecodeImageExtension extends Extension
 
         $container->setParameter('aws.s3', $config['aws']['s3']);
         unset($config['aws']);
-        $container->setParameter('uecode_image', $config);
+        $container->setParameter('uecode_image.route', $config['route']);
+        $container->setParameter('uecode_image.upload_dir', $config['upload_dir']);
+        $container->setParameter('uecode_image.tmp_dir', $config['tmp_dir']);
+        $container->setParameter('uecode_image.use_queue', $config['use_queue']);
 
         $loader = new Loader\YamlFileLoader(
             $container,
@@ -37,7 +40,6 @@ class UecodeImageExtension extends Extension
 
         $loader->load('parameters.yml');
         $loader->load('services.yml');
-//        $loader->load('routing.yml');
 
         $this->createAwsClient($container->getParameter('aws.s3'), $container);
     }
