@@ -35,8 +35,9 @@ class UecodeImageExtension extends Extension
             new FileLocator(__DIR__.'/../Resources/config')
         );
 
+        $loader->load('parameters.yml');
         $loader->load('services.yml');
-        $loader->load('routing.yml');
+//        $loader->load('routing.yml');
 
         $this->createAwsClient($container->getParameter('aws.s3'), $container);
     }

@@ -1,5 +1,5 @@
 <?php
-namespace Uecode\Bundle\Controller;
+namespace Uecode\Bundle\ImageBundle\Controller;
 
 use Aws\S3\Exception\S3Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

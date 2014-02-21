@@ -1,0 +1,3 @@
+upload:
+    pattern:  /upload
+    defaults: { _controller: UecodeImageBundle:Uploader:upload }

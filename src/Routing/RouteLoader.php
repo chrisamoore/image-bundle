@@ -1,6 +1,6 @@
 <?php
 
-namespace Uecode\Bundle\Routing;
+namespace Uecode\Bundle\ImageBundle\Routing;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
@@ -14,8 +14,8 @@ class RouteLoader implements LoaderInterface
 
     public function __construct($route, $controller)
     {
-        $this->route = '/upload';//$route;
-        $this->controller = 'UecodeImageBundle:Uploader:Upload';//$controller;
+        $this->route = $route;
+        $this->controller = $controller;
     }
 
     public function load($resource, $type = null)
@@ -26,18 +26,19 @@ class RouteLoader implements LoaderInterface
 
         $routes = new RouteCollection();
 
-        // prepare a new route
-        $pattern = '/' . $this->route;
-
-        $defaults = array(
-            '_controller' => $this->controller,
-        );
-
+        $path = '/' . $this->route;
+        $defaults = ['_controller' => $this->controller];
         $requirements = [];
-        $route = new Route($pattern, $defaults, $requirements);
+        $options = [];
+        $host = '';
+        $schemes = [];
+        $methods = ['POST'];
+        $condition = null;
+
+        $route = new Route($path, $defaults, $requirements, $options, $host, $schemes, $methods, $condition );
 
         // add the new route to the route collection:
-        $routeName = $this->route;
+        $routeName = 'uecode_image.' . $this->route;
         $routes->add($routeName, $route);
 
         $this->loaded = true;
