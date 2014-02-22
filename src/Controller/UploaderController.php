@@ -4,6 +4,7 @@ namespace Uecode\Bundle\ImageBundle\Controller;
 use Aws\S3\Exception\S3Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -32,16 +33,22 @@ class UploaderController extends Controller{
         $this->path = $this->request->server->get('DOCUMENT_ROOT');
         $this->tmp_dir = $this->container->getParameter('uecode_image.tmp_dir');
         $this->upload_dir = $this->container->getParameter('uecode_image.upload_dir');
+        $this->tmp_path = $this->path . DIRECTORY_SEPARATOR . 'bundles/uecode_image' . DIRECTORY_SEPARATOR . $this->tmp_dir . DIRECTORY_SEPARATOR;
 
-        $this->makeDir($this->path . DIRECTORY_SEPARATOR . $this->upload_dir);
-        $this->makeDir($this->path . DIRECTORY_SEPARATOR . $this->tmp_dir);
-        // move to tmp dir
+        $this->makeDir($this->tmp_path);
+        $this->moveToFileSystem($this->tmp_path, $this->file);
 
-        $this->moveToFileSystem($this->path . DIRECTORY_SEPARATOR . $this->tmp_dir, $this->file);
-        $this->moveToFileSystem($this->path . DIRECTORY_SEPARATOR . $this->upload_dir, $this->file);
+        // If no upload dir Don't do it
+        if($this->container->getParameter('uecode_image.upload_dir')){
+            $this->makeDir($this->path . DIRECTORY_SEPARATOR . $this->upload_dir);
+            $this->moveToFileSystem($this->path . DIRECTORY_SEPARATOR . $this->upload_dir, $this->file);
+        }
 
         // If S3
-        dd($this->handleS3Upload($this->file, $this->request));
+        if($this->container->getParameter('aws.s3') !== false)
+            return new JsonResponse($this->handleS3Upload($this->file, $this->request));
+
+        // TODO: account for not S3
     }
 
     protected function moveToFileSystem($path, UploadedFile $file, $filename = null)
@@ -80,7 +87,7 @@ class UploaderController extends Controller{
             $uploaded = $this->s3->putObject([
                 'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
                 'Key'    => $this->name,
-                'Body'   => fopen($this->path . DIRECTORY_SEPARATOR . $this->tmp_dir . DIRECTORY_SEPARATOR . $this->name, 'r'),
+                'Body'   => fopen($this->tmp_path . DIRECTORY_SEPARATOR . $this->name, 'r'),
                 'ACL'    => 'public-read',
             ]);
 

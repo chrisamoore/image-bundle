@@ -27,9 +27,6 @@ class UecodeImageExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('aws.s3', $config['aws']['s3']);
-        $container->setParameter('aws.s3.key', $config['aws']['s3']['key']);
-        $container->setParameter('aws.s3.secret', $config['aws']['s3']['bucket']);
-        $container->setParameter('aws.s3.region', $config['aws']['s3']['region']);
         $container->setParameter('aws.s3.bucket', $config['aws']['s3']['bucket']);
         $container->setParameter('aws.s3.directory', $config['aws']['s3']['directory']);
 
