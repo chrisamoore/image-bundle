@@ -27,7 +27,12 @@ class UecodeImageExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('aws.s3', $config['aws']['s3']);
-        unset($config['aws']);
+        $container->setParameter('aws.s3.key', $config['aws']['s3']['key']);
+        $container->setParameter('aws.s3.secret', $config['aws']['s3']['bucket']);
+        $container->setParameter('aws.s3.region', $config['aws']['s3']['region']);
+        $container->setParameter('aws.s3.bucket', $config['aws']['s3']['bucket']);
+        $container->setParameter('aws.s3.directory', $config['aws']['s3']['directory']);
+
         $container->setParameter('uecode_image.route', $config['route']);
         $container->setParameter('uecode_image.upload_dir', $config['upload_dir']);
         $container->setParameter('uecode_image.tmp_dir', $config['tmp_dir']);
