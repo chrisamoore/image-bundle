@@ -1,0 +1,39 @@
+{
+    "name": "uecode/image-bundle",
+    "type": "library",
+
+    "description": "Image manipulation and uploading for Symfony2",
+    "keywords": ["image", "aws", "symfony", "bundle"],
+    "homepage": "https://github.com/uecode/image-bundle",
+    "license": "Apache2",
+    "authors": [{
+        "name": "Christopher A. Moore",
+        "email": "cmoore@undergroundelephant.com",
+        "role": "developer",
+        "homepage": "http://undergroundelephant.com"
+    }],
+    "support": {
+        "email": "cmoore@undergroundelephant.com"
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "doctrine/common": ">2.4.0",
+        "gregwar/image": "dev-master"
+    },
+    "suggest": {
+        "aws/aws-sdk-php": "Required to use S3",
+        "uecode/qpush-bundle": "Required for Async Image Manipulation"
+    },
+    "require-dev": {
+        "symfony/symfony": "dev-master",
+        "monolog/monolog": "~1.7.0",
+        "phpunit/phpunit": "3.7.*",
+        "aws/aws-sdk-php": "~2.5.2"
+    },
+    "minimum-stability": "alpha",
+    "autoload": {
+        "psr-4": {
+            "Uecode\\Bundle\\ImageBundle\\": "src/"
+        }
+    }
+}
