@@ -19,6 +19,10 @@ class UploaderController extends Controller{
     public $baseUrl;
     public $tmp_dir;
     public $directory;
+    public $upload_dir;
+    public $request;
+    public $operations;
+    public $files = [];
     protected $path;
     protected $name;
     protected $stuff;
@@ -27,28 +31,53 @@ class UploaderController extends Controller{
     {
         $this->request = $this->container->get('request');
 
-        $this->file = $this->request->files->get('files')[0];
+        $this->request->files->get('files');
+
+        // Preface for MultiFile upload
+        $files = $this->request->files->get('files');
+        foreach ($files as $file) {
+            $this->files[$file->getClientOriginalName()] = $file;
+        }
+        // Temp fix
+        $this->file = $this->files[$files[0]->getClientOriginalName()];
+
+        $this->operations = json_decode($this->request->get('operations'));
+
         $this->fs = new Filesystem();
         $this->name = $this->name($this->file);
-        $this->path = $this->request->server->get('DOCUMENT_ROOT');
-        $this->tmp_dir = $this->container->getParameter('uecode_image.tmp_dir');
-        $this->upload_dir = $this->container->getParameter('uecode_image.upload_dir');
-        $this->tmp_path = $this->path . DIRECTORY_SEPARATOR . 'bundles/uecode_image' . DIRECTORY_SEPARATOR . $this->tmp_dir . DIRECTORY_SEPARATOR;
 
-        $this->makeDir($this->tmp_path);
-        $this->moveToFileSystem($this->tmp_path, $this->file);
+        $this->path = $this->request->server->get('DOCUMENT_ROOT') . DIRECTORY_SEPARATOR . 'bundles/uecode_image/';
+        $this->tmp_dir = $this->path . $this->container->getParameter('uecode_image.tmp_dir');
+        $this->upload_dir = (!$this->container->getParameter('uecode_image.upload_dir')) ? false :
+            $this->path . $this->container->getParameter('uecode_image.upload_dir');
+
+        $this->makeDir($this->tmp_dir);
+        $this->moveToFileSystem($this->tmp_dir, $this->file);
 
         // If no upload dir Don't do it
-        if($this->container->getParameter('uecode_image.upload_dir')){
-            $this->makeDir($this->path . DIRECTORY_SEPARATOR . $this->upload_dir);
-            $this->moveToFileSystem($this->path . DIRECTORY_SEPARATOR . $this->upload_dir, $this->file);
+        if($this->upload_dir){
+            $this->makeDir($this->upload_dir);
         }
 
-        // If S3
-        if($this->container->getParameter('aws.s3') !== false)
-            return new JsonResponse($this->handleS3Upload($this->file, $this->request));
+        // Handle Provider
+        switch($this->container->getParameter('uecode_image.provider')){
+            case 's3':
+                $data = $this->handleS3Upload($this->file, $this->request);
+                break;
+            case 'local':
+                $data = $this->moveToFileSystem($this->upload_dir, $this->file);
+                break;
+        }
 
-        // TODO: account for not S3
+        $this->handleOperations();
+        return new JsonResponse($data);
+
+    }
+
+    protected function handleOperations(){
+        foreach($this->operations as $operation){
+            dd($operation);
+        }
     }
 
     protected function moveToFileSystem($path, UploadedFile $file, $filename = null)
@@ -58,7 +87,9 @@ class UploaderController extends Controller{
         $this->fs->copy($file, $path . DIRECTORY_SEPARATOR . $name);
         $web = explode('web/', $path);
 
-        return 'http://' . $this->request->getHost() . $web[1] . DIRECTORY_SEPARATOR . $name;
+        $request = $this->request;
+        $http = ($request->isSecure()) ? 'https://' : 'http://';
+        return $http . $request->getBaseUrl() . $request->getHost() . DIRECTORY_SEPARATOR . $web[1] . DIRECTORY_SEPARATOR . $name;
     }
 
     protected function makeDir($dir)
@@ -80,6 +111,7 @@ class UploaderController extends Controller{
         $this->location .= $this->baseUrl . DIRECTORY_SEPARATOR . $this->bucket . DIRECTORY_SEPARATOR . $this->directory . DIRECTORY_SEPARATOR;
     }
 
+    //TODO: Solid Principle needs more love here
     protected function handleS3Upload($filepath, Request $request)
     {
         $this->initS3();
@@ -87,7 +119,7 @@ class UploaderController extends Controller{
             $uploaded = $this->s3->putObject([
                 'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
                 'Key'    => $this->name,
-                'Body'   => fopen($this->tmp_path . DIRECTORY_SEPARATOR . $this->name, 'r'),
+                'Body'   => fopen($this->tmp_dir . $this->name, 'r'),
                 'ACL'    => 'public-read',
             ]);
 

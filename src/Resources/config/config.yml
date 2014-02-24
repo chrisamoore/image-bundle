@@ -1,11 +1,11 @@
 # Sample Config
 uecode_image:
-    route: upload
-    use_queue: false
-    upload_dir: false
-    tmp_dir: /tmp # Local TMP Dir /
+    route: upload # Defaults to upload
+    use_queue: false # true || false - Will utilize qpush bundle
+    upload_dir: false # < DIR Name > || false - Local Upload Dir /Symfony/web/bundles/uecode_image/upload
+    tmp_dir: /tmp # Local TMP Dir - /Symfony/web/bundles/uecode_image/tmp
     aws:
-        s3:
+        s3: # false || values below
             key: < YOUR AWS KEY >
             secret: < YOUR AWS SECRET >
             region: < YOUR AWS REGION >

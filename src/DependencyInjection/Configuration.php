@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->children()
-                ->arrayNode('s3')
+                ->arrayNode('s3')->canBeDisabled()
                     ->children()
                         ->scalarNode('key')->end()
                         ->scalarNode('secret')->end()

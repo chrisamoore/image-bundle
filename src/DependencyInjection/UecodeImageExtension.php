@@ -43,13 +43,17 @@ class UecodeImageExtension extends Extension
         $loader->load('parameters.yml');
         $loader->load('services.yml');
 
-        $this->createAwsClient($container->getParameter('aws.s3'), $container);
+        if($container->getParameter('aws.s3')['enabled']){
+            $this->createAwsClient($container->getParameter('aws.s3'), $container);
+            $container->setParameter('uecode_image.provider', 's3');
+        }else{
+            $container->setParameter('uecode_image.provider', 'local');
+        }
     }
 
     private function createAwsClient($config, ContainerBuilder $container)
     {
         if (!$container->hasDefinition('uecode_image.provider.aws')) {
-
             if (!class_exists('Aws\S3\S3Client')) {
                 throw new \RuntimeException(
                     'You must require "aws/aws-sdk-php" to use the AWS provider.'
