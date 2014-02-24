@@ -20,15 +20,19 @@
  * @license     Apache License, Version 2.0
  */
 
-namespace Uecode\Bundle\ImageBundle;
-
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace Uecode\Bundle\ImageBundle\Tests;
 
 /**
- * Class UecodeImageBundle
+ * Class UploaderTest
  *
  * @author Chris Moore <chrisamoore@gmail.com>
  */
-class UecodeImageBundle extends Bundle
+class UploaderTest
 {
+    /**
+     * 
+     */
+    public function testIntantiation()
+    {
+    }
 }
