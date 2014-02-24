@@ -3,7 +3,12 @@ uecode_image:
     route: upload # Defaults to upload
     use_queue: false # true || false - Will utilize qpush bundle
     upload_dir: false # < DIR Name > || false - Local Upload Dir /Symfony/web/bundles/uecode_image/upload
-    tmp_dir: /tmp # Local TMP Dir - /Symfony/web/bundles/uecode_image/tmp
+    tmp_dir: tmp # Local TMP Dir - /Symfony/web/bundles/uecode_image/tmp
+    gregwar:
+        cache_dir: cache
+        throw_exception: true
+        fallback_image: %kernel.root_dir%/../web/bundles/uecode_image/tmp/2ed2eeb6c3318342ace12cc60f661258.jpeg
+        web_dir: %kernel.root_dir%/../web
     aws:
         s3: # false || values below
             key: < YOUR AWS KEY >
