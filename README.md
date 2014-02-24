@@ -1,15 +1,15 @@
 ImageBundle
 ===========
 
-####TODO: 
+####TODO:
 
 - Docs
 
 
 ### USE:
 POST to /upload
-        
-        files[] : uploaded file, 
+
+        files[] : uploaded file,
         {
           "operations": [
             {
@@ -25,8 +25,7 @@ POST to /upload
                 "y": 0,
                 "w": 10,
                 "h": 10
-              },
-              "convert": true
+              }
             },
             {
               "resize": {

@@ -35,6 +35,16 @@ class UecodeImageExtension extends Extension
         $container->setParameter('uecode_image.tmp_dir', $config['tmp_dir']);
         $container->setParameter('uecode_image.use_queue', $config['use_queue']);
 
+        $container->setParameter('uecode_image.gregwar.cache_dir', $config['gregwar']['cache_dir']);
+        $container->setParameter('uecode_image.gregwar.throw_exception', $config['gregwar']['throw_exception']);
+        $container->setParameter('uecode_image.gregwar.fallback_image', $config['gregwar']['fallback_image']);
+        $container->setParameter('uecode_image.gregwar.web_dir', $config['gregwar']['web_dir']);
+        // TODO: Duplicated
+        $container->setParameter('gregwar_image.cache_dir', $config['gregwar']['cache_dir']);
+        $container->setParameter('gregwar_image.throw_exception', $config['gregwar']['throw_exception']);
+        $container->setParameter('gregwar_image.fallback_image', $config['gregwar']['fallback_image']);
+        $container->setParameter('gregwar_image.web_dir', $config['gregwar']['web_dir']);
+
         $loader = new Loader\YamlFileLoader(
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
@@ -87,5 +97,11 @@ class UecodeImageExtension extends Extension
         }
 
         return $aws;
+    }
+
+    private function createGregwar()
+    {
+        $gregwar = new Definition('Aws\S3\S3Client');
+
     }
 }

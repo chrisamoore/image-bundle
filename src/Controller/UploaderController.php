@@ -23,6 +23,7 @@ class UploaderController extends Controller{
     public $request;
     public $operations;
     public $files = [];
+    public $local_file;
     protected $path;
     protected $name;
     protected $stuff;
@@ -40,8 +41,9 @@ class UploaderController extends Controller{
         }
         // Temp fix
         $this->file = $this->files[$files[0]->getClientOriginalName()];
-
-        $this->operations = json_decode($this->request->get('operations'));
+        $operations = json_decode($this->request->get('operations'));
+        $this->meta = $operations->meta;
+        $this->operations = $operations->operations;
 
         $this->fs = new Filesystem();
         $this->name = $this->name($this->file);
@@ -52,35 +54,86 @@ class UploaderController extends Controller{
             $this->path . $this->container->getParameter('uecode_image.upload_dir');
 
         $this->makeDir($this->tmp_dir);
-        $this->moveToFileSystem($this->tmp_dir, $this->file);
+        $this->moveToFileSystem($this->file, $this->tmp_dir);
+        $this->local_file = $this->tmp_dir . DIRECTORY_SEPARATOR . $this->name;
 
         // If no upload dir Don't do it
         if($this->upload_dir){
             $this->makeDir($this->upload_dir);
         }
 
-        // Handle Provider
-        switch($this->container->getParameter('uecode_image.provider')){
-            case 's3':
-                $data = $this->handleS3Upload($this->file, $this->request);
-                break;
-            case 'local':
-                $data = $this->moveToFileSystem($this->upload_dir, $this->file);
-                break;
-        }
+        $data = $this->upload();
 
-        $this->handleOperations();
         return new JsonResponse($data);
 
     }
 
-    protected function handleOperations(){
-        foreach($this->operations as $operation){
-            dd($operation);
+    protected function upload()
+    {
+        $data['ops'] = $this->handleOperations();
+
+        // grab all files in tmp dir and upload to each location
+        $files = preg_grep('/' . explode('.', $this->name)[0] . '/', scandir($this->tmp_dir . '/'));
+
+        foreach ($files as $file) {
+            $file = $this->tmp_dir . DIRECTORY_SEPARATOR . $file;
+            $filename = explode('/', $file);
+
+            switch($this->container->getParameter('uecode_image.provider')){
+                case 's3':
+                    $data['s3'] = $this->handleS3Upload($file, $this->request);
+                    break;
+                case 'local':
+                    $data['local'] = $this->fs->copy($file, $this->upload_dir . DIRECTORY_SEPARATOR . end($filename));
+                    break;
+            }
+        }
+        $this->cleanTmp();
+        // Kill tmp Dir
+
+        return $data;
+    }
+
+    protected function cleanTmp()
+    {
+        foreach (scandir($this->tmp_dir . '/') as $file) {
+            if ($file == '.' || $file == '..') continue;
+            unlink($this->tmp_dir . DIRECTORY_SEPARATOR . $file);
         }
     }
 
-    protected function moveToFileSystem($path, UploadedFile $file, $filename = null)
+    protected function handleOperations(){
+        foreach($this->operations as $operation){
+            $ops[] = $this->doOperation($operation);
+        }
+        return $ops;
+    }
+
+    /**
+     * Interprets Gregwar Image API
+     */
+    protected function doOperation($operation)
+    {
+        $handler =  $this->get('image.handling');
+        $file = $handler->open($this->local_file);
+        foreach ($operation as $op => $params) {
+            switch($op){
+                case 'resize':
+                    $file->resize($params->width, $params->height);
+                    break;
+                case 'rotate':
+                    $file->rotate($params->degrees);
+                    break;
+                case 'crop':
+                    $file->crop($params->x, $params->y, $params->w, $params->h);
+                    break;
+            }
+            $ops[] = $file->save($this->tmp_dir . DIRECTORY_SEPARATOR . $op . '_' . $this->name, 'jpg', 100);
+        }
+        return $ops;
+    }
+
+    protected function moveToFileSystem($file, $path, $filename = null)
     {
         $name = $this->name;
 
@@ -119,7 +172,7 @@ class UploaderController extends Controller{
             $uploaded = $this->s3->putObject([
                 'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
                 'Key'    => $this->name,
-                'Body'   => fopen($this->tmp_dir . $this->name, 'r'),
+                'Body'   => fopen($filepath, 'r'),
                 'ACL'    => 'public-read',
             ]);
 
