@@ -1,0 +1,13 @@
+# Sample Config
+uecode_image:
+    route: upload
+    use_queue: false
+    upload_dir: false
+    tmp_dir: /tmp # Local TMP Dir /
+    aws:
+        s3:
+            key: < YOUR AWS KEY >
+            secret: < YOUR AWS SECRET >
+            region: < YOUR AWS REGION >
+            bucket: < YOUR AWS BUCKET >
+            directory: < YOUR AWS DIRECTORY ( Optional ) >
