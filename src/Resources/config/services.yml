@@ -1,12 +1,18 @@
 parameters:
-    image.handling.class: Uecode\Bundle\ImageBundle\Services\ImageService
-    image.handler.class: Uecode\Bundle\ImageBundle\Services\ImageHandler
+    uecode_image.handling.class: Uecode\Bundle\ImageBundle\Services\ImageService
+    uecode_image.handler.class: Uecode\Bundle\ImageBundle\Services\ImageHandler
 
 services:
     # Image handling factory
     image.handling:
-        class: %image.handling.class%
-        arguments: [%uecode_image.gregwar.cache_dir%, %image.handler.class%, @service_container, @kernel, %uecode_image.gregwar.throw_exception%, %uecode_image.gregwar.fallback_image%]
+        class: %uecode_image.handling.class%
+        arguments:
+            - %uecode_image.gregwar.cache_dir%
+            - %uecode_image.handler.class%
+            - @service_container
+            - @kernel
+            - %uecode_image.gregwar.throw_exception%
+            - %uecode_image.gregwar.fallback_image%
 
     uecode_image.routing_loader:
         class: Uecode\Bundle\ImageBundle\Routing\RouteLoader
