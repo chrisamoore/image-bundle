@@ -27,7 +27,7 @@
     "require-dev": {
         "symfony/symfony": "dev-master",
         "monolog/monolog": "~1.7.0",
-        "aws/aws-sdk-php": "~2.5.2",
+        "aws/aws-sdk-php": "~2.5",
         "phpunit/phpunit": "3.7.*"
     },
     "minimum-stability": "alpha",
