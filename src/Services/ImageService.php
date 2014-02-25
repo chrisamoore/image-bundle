@@ -22,14 +22,14 @@
 
 namespace Uecode\Bundle\ImageBundle\Services;
 
-use Uecode\Bundle\ImageBundle\Handler\ImageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Uecode\Bundle\ImageBundle\Handler\ImageHandler;
 
 /**
  * Image manipulation service
  *
- * Based on Gregwar's Image Repo
+ * Based on Gregwar's Image Repo { https://github.com/Gregwar/Image }
  *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>
  */
@@ -60,13 +60,23 @@ class ImageService
      */
     private $throwException;
 
+
+    /**
+     * @param                    $cacheDirectory
+     * @param                    $handlerClass
+     * @param ContainerInterface $container
+     * @param KernelInterface    $kernel
+     * @param                    $throwException
+     *
+     * @TODO: Will not typehint $handlerClass Due to Dynamic creation inside might need a factory
+     */
     public function __construct(
         $cacheDirectory,
-        ImageHandler $handlerClass,
+        $handlerClass, //
         ContainerInterface $container,
         KernelInterface $kernel,
         $throwException
-    ) {
+    ){
         $this->cacheDirectory = $cacheDirectory;
         $this->handlerClass   = $handlerClass;
         $this->container      = $container;
@@ -83,7 +93,7 @@ class ImageService
      */
     public function open($file)
     {
-        if (strlen($file) >= 1 && $file[0] === '@') {
+        if (strlen($file) >= 1 && $file[ 0 ] === '@') {
             $file = $this->kernel->locateResource($file);
         }
 
@@ -118,16 +128,16 @@ class ImageService
         $webDir    = $container->getParameter('gregwar_image.web_dir');
 
         $handlerClass = $this->handlerClass;
-        $image        = new $handlerClass($file, $width, $height, $this->throwException);
+        $image        = new $handlerClass( $file, $width, $height, $this->throwException );
 
         $image->setCacheDir($this->cacheDirectory);
         $image->setActualCacheDir($webDir . '/' . $this->cacheDirectory);
 
         $image->setFileCallback(
-            function ($file) use ($container) {
-                return $container->get('templating.helper.assets')
-                    ->getUrl($file);
-            }
+              function ($file) use ($container){
+                  return $container->get('templating.helper.assets')
+                                   ->getUrl($file);
+              }
         );
 
         return $image;

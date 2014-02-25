@@ -29,10 +29,7 @@ namespace Uecode\Bundle\ImageBundle\Tests;
  */
 class UploaderTest
 {
-    /**
-     *
-     */
-    public function testIntantiation()
+    public function testInstantiation()
     {
     }
 }

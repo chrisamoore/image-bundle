@@ -7,7 +7,7 @@
     "homepage": "https://github.com/uecode/image-bundle",
     "license": "Apache2",
     "authors": [
-        {"name": "Christopher A. Moore", "email": "cmoore@undergroundelephant.com"}
+        {"name": "Christopher A. Moore", "email": "cmoore@undergroundelephant.com"},
         {"name": "Aaron Scherer", "email": "aequasi@gmail.com"}
     ],
     "support": {
@@ -15,6 +15,7 @@
     },
     "require": {
         "php": ">=5.4.0",
+        "ext-gd" : "*",
         "doctrine/common": ">2.4.0",
         "gregwar/image": "dev-master"
     },

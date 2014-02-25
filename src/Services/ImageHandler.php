@@ -1,13 +1,36 @@
 <?php
 
+/**
+ * Copyright 2014 Underground Elephant
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @package
+ * @copyright   Underground Elephant 2014
+ * @license     Apache License, Version 2.0
+ */
+
+
 namespace Uecode\Bundle\ImageBundle\Services;
 
 use Gregwar\Image\Image;
 
 /**
- * Image manipulation class
+ * Class ImageHandler
  *
- * @author Gregwar <g.passault@gmail.com>
+ * Based on Gregwar's Image Repo { https://github.com/Gregwar/Image }
+ *
+ * @author Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
  */
 class ImageHandler extends Image
 {
@@ -21,9 +44,15 @@ class ImageHandler extends Image
      * @param null $width
      * @param null $height
      * @param bool $throwException
+     * @param null $fallbackImage
      */
-    public function __construct($originalFile = null, $width = null, $height = null, $throwException = null, $fallbackImage = null)
-    {
+    public function __construct(
+        $originalFile = null,
+        $width = null,
+        $height = null,
+        $throwException = null,
+        $fallbackImage = null
+    ){
         $this->useFallback(!$throwException);
         $this->setFallback($fallbackImage);
 

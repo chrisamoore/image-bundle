@@ -14,6 +14,18 @@ services:
             - %uecode_image.gregwar.throw_exception%
             - %uecode_image.gregwar.fallback_image%
 
+    uecode_image.upload_handler:
+        class: Uecode\Bundle\ImageBundle\Services\UploadHandler
+        scope: request
+        arguments:
+            - @request
+            - @filesystem
+            - %kernel.root_dir%
+            - %uecode_image.tmp_dir%
+            - %uecode_image.upload_dir%
+            - @image.handling
+            - %uecode_image.provider%
+
     uecode_image.routing_loader:
         class: Uecode\Bundle\ImageBundle\Routing\RouteLoader
         arguments: [ 'upload' , 'UecodeImageBundle:Uploader:Upload']

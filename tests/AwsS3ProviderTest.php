@@ -29,9 +29,6 @@ namespace Uecode\Bundle\ImageBundle\Tests;
  */
 class AWSS3ClientTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * 
-     */
     public function setUp()
     {
     }
