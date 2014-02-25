@@ -33,6 +33,9 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
     private function getS3Node()
     {
         $treeBuilder    = new TreeBuilder();
@@ -54,6 +57,9 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
     public function getGregWarNode()
     {
         $treeBuilder = new TreeBuilder();

@@ -9,25 +9,96 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 
+/**
+ * Class UploaderController
+ *
+ * @package Uecode\Bundle\ImageBundle\Controller
+ */
 class UploaderController extends Controller{
 
+    /**
+     * @var
+     */
     public $file;
+
+    /**
+     * @var
+     */
     public $fileName;
+
+    /**
+     * @var
+     */
     public $fs;
+
+    /**
+     * @var
+     */
     public $location;
+
+    /**
+     * @var
+     */
     public $bucket;
+
+    /**
+     * @var
+     */
     public $baseUrl;
+
+    /**
+     * @var
+     */
     public $tmp_dir;
+
+    /**
+     * @var
+     */
     public $directory;
+
+    /**
+     * @var
+     */
     public $upload_dir;
+
+    /**
+     * @var
+     */
     public $request;
+
+    /**
+     * @var
+     */
     public $operations;
+
+    /**
+     * @var array
+     */
     public $files = [];
+
+    /**
+     * @var
+     */
     public $local_file;
+
+    /**
+     * @var
+     */
     protected $path;
+
+    /**
+     * @var
+     */
     protected $name;
+
+    /**
+     * @var
+     */
     protected $stuff;
 
+    /**
+     * @return JsonResponse
+     */
     public function uploadAction()
     {
         $this->request = $this->container->get('request');
@@ -68,6 +139,9 @@ class UploaderController extends Controller{
 
     }
 
+    /**
+     * @return mixed
+     */
     protected function upload()
     {
         $data['ops'] = $this->handleOperations();
@@ -94,6 +168,9 @@ class UploaderController extends Controller{
         return $data;
     }
 
+    /**
+     *
+     */
     protected function cleanTmp()
     {
         foreach (scandir($this->tmp_dir . '/') as $file) {
@@ -102,6 +179,9 @@ class UploaderController extends Controller{
         }
     }
 
+    /**
+     * @return array
+     */
     protected function handleOperations(){
         foreach($this->operations as $operation){
             $ops[] = $this->doOperation($operation);
@@ -133,6 +213,13 @@ class UploaderController extends Controller{
         return $ops;
     }
 
+    /**
+     * @param      $file
+     * @param      $path
+     * @param null $filename
+     *
+     * @return string
+     */
     protected function moveToFileSystem($file, $path, $filename = null)
     {
         $name = $this->name;
@@ -145,6 +232,9 @@ class UploaderController extends Controller{
         return $http . $request->getBaseUrl() . $request->getHost() . DIRECTORY_SEPARATOR . $web[1] . DIRECTORY_SEPARATOR . $name;
     }
 
+    /**
+     * @param $dir
+     */
     protected function makeDir($dir)
     {
         if(!$this->fs->exists($dir))
@@ -155,6 +245,9 @@ class UploaderController extends Controller{
             }
     }
 
+    /**
+     *
+     */
     protected function initS3()
     {
         $this->s3 = $this->container->get('uecode_image.provider.aws');
@@ -165,6 +258,12 @@ class UploaderController extends Controller{
     }
 
     //TODO: Solid Principle needs more love here
+    /**
+     * @param         $filepath
+     * @param Request $request
+     *
+     * @return mixed
+     */
     protected function handleS3Upload($filepath, Request $request)
     {
         $this->initS3();
@@ -183,6 +282,11 @@ class UploaderController extends Controller{
         }
     }
 
+    /**
+     * @param $file
+     *
+     * @return string
+     */
     public function name($file)
     {
         $ext = $file->guessExtension();

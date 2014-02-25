@@ -28,4 +28,4 @@ if (!file_exists(dirname(__DIR__) . '/composer.lock')) {
 }
 
 $loader = require dirname(__DIR__) . '/vendor/autoload.php';
-$loader->addPsr4('Uecode\\Bundle\\ImageBundle\\Tests\\', __DIR__);
+$loader->addPsr4('Uecode\\Bundle\\ImageBundle\\tests\\', __DIR__);

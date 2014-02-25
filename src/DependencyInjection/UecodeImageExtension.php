@@ -61,6 +61,14 @@ class UecodeImageExtension extends Extension
         }
     }
 
+    /**
+     * @param                  $config
+     * @param ContainerBuilder $container
+     *
+     * @return Definition
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
     private function createAwsClient($config, ContainerBuilder $container)
     {
         if (!$container->hasDefinition('uecode_image.provider.aws')) {
@@ -98,10 +106,4 @@ class UecodeImageExtension extends Extension
 
         return $aws;
     }
-
-    private function createGregwar()
-    {
-        $gregwar = new Definition('Aws\S3\S3Client');
-
-    }
-}
+ }

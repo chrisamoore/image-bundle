@@ -11,6 +11,9 @@ use Gregwar\Image\Image;
  */
 class ImageHandler extends Image
 {
+    /**
+     * @var null
+     */
     protected $fileCallback = null;
 
     /**
@@ -50,11 +53,21 @@ class ImageHandler extends Image
         return $callback($filename);
     }
 
+    /**
+     * @param        $file
+     * @param string $type
+     * @param int    $quality
+     *
+     * @return bool|string
+     */
     public function save($file, $type = 'guess', $quality = 80)
     {
         return parent::save($file, $type, $quality);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return parent::__toString();

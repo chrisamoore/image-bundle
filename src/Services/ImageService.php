@@ -13,10 +13,29 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ImageService
 {
+    /**
+     * @var
+     */
     private $cacheDirectory;
+
+    /**
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface
+     */
     private $container;
+
+    /**
+     * @var
+     */
     private $handlerClass;
+
+    /**
+     * @var \Symfony\Component\HttpKernel\KernelInterface
+     */
     private $kernel;
+
+    /**
+     * @var
+     */
     private $throwException;
 
     public function __construct($cacheDirectory, $handlerClass, ContainerInterface $container, KernelInterface $kernel, $throwException)
