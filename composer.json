@@ -6,12 +6,10 @@
     "keywords": ["image", "aws", "symfony", "bundle"],
     "homepage": "https://github.com/uecode/image-bundle",
     "license": "Apache2",
-    "authors": [{
-        "name": "Christopher A. Moore",
-        "email": "cmoore@undergroundelephant.com",
-        "role": "developer",
-        "homepage": "http://undergroundelephant.com"
-    }],
+    "authors": [
+        {"name": "Christopher A. Moore", "email": "cmoore@undergroundelephant.com"}
+        {"name": "Aaron Scherer", "email": "aequasi@gmail.com"}
+    ],
     "support": {
         "email": "cmoore@undergroundelephant.com"
     },
@@ -26,7 +24,6 @@
     },
     "require-dev": {
         "symfony/symfony": "dev-master",
-        "monolog/monolog": "~1.7.0",
         "aws/aws-sdk-php": "~2.5",
         "phpunit/phpunit": "3.7.*"
     },
