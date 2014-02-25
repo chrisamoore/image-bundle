@@ -1,5 +1,25 @@
 <?php
 
+/**
+ * Copyright 2014 Underground Elephant
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @package     image-bundle
+ * @copyright   Underground Elephant 2014
+ * @license     Apache License, Version 2.0
+ */
+
 namespace Uecode\Bundle\ImageBundle\DependencyInjection;
 
 use Uecode\Bundle\ImageBundle\DependencyInjection\Configuration;
@@ -12,9 +32,10 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
- * This is the class that loads and manages your bundle configuration
+ * Class UecodeImageExtension
  *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
+ * @author Chris Moore <chrisamoore@gmail.com>
+ * @author Aaron Scherer <aequasi@gmail.com>
  */
 class UecodeImageExtension extends Extension
 {
@@ -35,22 +56,20 @@ class UecodeImageExtension extends Extension
         $container->setParameter('uecode_image.tmp_dir', $config['tmp_dir']);
         $container->setParameter('uecode_image.use_queue', $config['use_queue']);
 
-        $container->setParameter('uecode_image.gregwar.cache_dir', $config['gregwar']['cache_dir']);
-        $container->setParameter('uecode_image.gregwar.throw_exception', $config['gregwar']['throw_exception']);
-        $container->setParameter('uecode_image.gregwar.fallback_image', $config['gregwar']['fallback_image']);
-        $container->setParameter('uecode_image.gregwar.web_dir', $config['gregwar']['web_dir']);
-        // TODO: Duplicated
-        $container->setParameter('gregwar_image.cache_dir', $config['gregwar']['cache_dir']);
-        $container->setParameter('gregwar_image.throw_exception', $config['gregwar']['throw_exception']);
-        $container->setParameter('gregwar_image.fallback_image', $config['gregwar']['fallback_image']);
-        $container->setParameter('gregwar_image.web_dir', $config['gregwar']['web_dir']);
+        foreach ($config['gregwar'] as $key => $value) {
+            $container->setParameters(
+                [
+                    'uecode_image.gregwar.'.$key => $value,
+                    'gregwar_image.'.$key        => $value
+                ]
+            );
+        }
 
         $loader = new Loader\YamlFileLoader(
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
         );
 
-        $loader->load('parameters.yml');
         $loader->load('services.yml');
 
         if($container->getParameter('aws.s3')['enabled']){
