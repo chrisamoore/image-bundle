@@ -41,7 +41,8 @@ class ImageHandler extends Image implements Handler
     /**
      * {@inheritDoc}
      */
-    public function __construct($originalFile, $width, $height, $throwException, $fallbackImage) {
+    public function __construct($originalFile, $width, $height, $throwException, $fallbackImage)
+    {
         $this->useFallback(!$throwException);
         $this->setFallback($fallbackImage);
 

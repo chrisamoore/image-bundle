@@ -93,7 +93,7 @@ class ImageService
     /**
      * Get a new image
      *
-     * @param integer $width The width
+     * @param integer $width  The width
      * @param integer $height The height
      *
      * @return object a manipulable image instance

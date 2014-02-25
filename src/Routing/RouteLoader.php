@@ -45,7 +45,7 @@ class RouteLoader implements LoaderInterface
      */
     public function __construct($route, $controller)
     {
-        $this->route = $route;
+        $this->route      = $route;
         $this->controller = $controller;
     }
 
@@ -59,21 +59,21 @@ class RouteLoader implements LoaderInterface
     public function load($resource, $type = null)
     {
         if (true === $this->loaded) {
-            throw new \RuntimeException('Do not add the "' .$this->route. '" loader twice');
+            throw new \RuntimeException('Do not add the "' . $this->route . '" loader twice');
         }
 
         $routes = new RouteCollection();
 
-        $path = '/' . $this->route;
-        $defaults = ['_controller' => $this->controller];
+        $path         = '/' . $this->route;
+        $defaults     = ['_controller' => $this->controller];
         $requirements = [];
-        $options = [];
-        $host = '';
-        $schemes = [];
-        $methods = ['POST'];
-        $condition = null;
+        $options      = [];
+        $host         = '';
+        $schemes      = [];
+        $methods      = ['POST'];
+        $condition    = null;
 
-        $route = new Route($path, $defaults, $requirements, $options, $host, $schemes, $methods, $condition );
+        $route = new Route($path, $defaults, $requirements, $options, $host, $schemes, $methods, $condition);
 
         // add the new route to the route collection:
         $routeName = 'uecode_image.' . $this->route;

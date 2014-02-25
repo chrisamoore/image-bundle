@@ -141,9 +141,8 @@ class UploaderController extends Controller
         $this->fs   = new Filesystem();
         $this->name = $this->name($this->file);
 
-        $this->path       =
-            $this->request->server->get('DOCUMENT_ROOT') . DIRECTORY_SEPARATOR . 'bundles/uecode_image/';
-        $this->tempDir    = $this->path . $this->container->getParameter('uecode_image.tempDir');
+        $this->path      = $this->request->server->get('DOCUMENT_ROOT') . DIRECTORY_SEPARATOR . 'bundles/uecode_image/';
+        $this->tempDir   = $this->path . $this->container->getParameter('uecode_image.tempDir');
         $this->uploadDir =
             (!$this->container->getParameter('uecode_image.uploadDir')) ? false :
                 $this->path . $this->container->getParameter('uecode_image.uploadDir');

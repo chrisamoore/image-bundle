@@ -26,6 +26,7 @@ namespace Uecode\Bundle\ImageBundle\Tests;
  * AWSS3ClientTest
  *
  * Feb 21, 2014 10:26 AM
+ *
  * @author Christopher A. Moore <cmoore@undergroundelephant.com>
  */
 class AWSS3ClientTest extends \PHPUnit_Framework_TestCase

@@ -42,6 +42,7 @@ interface Handler
 
     /**
      * Defines the callback to call to compute the new filename
+     *
      * @param \Closure $fileCallback
      */
     public function setFileCallback($fileCallback);
