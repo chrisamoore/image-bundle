@@ -8,9 +8,9 @@ namespace Uecode\Bundle\ImageBundle\Tests;
  * Time: 4:45 PM
  */
 
-class UploaderTest {
+class UploaderTest
+{
     public function testIntantiation()
     {
-
     }
 }

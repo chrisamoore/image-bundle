@@ -1,49 +1,76 @@
 <?php
 
+/**
+ * Copyright 2014 Underground Elephant
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @package     image-bundle
+ * @copyright   Underground Elephant 2014
+ * @license     Apache License, Version 2.0
+ */
+
 namespace Uecode\Bundle\ImageBundle\Services;
 
-use Uecode\Bundle\ImageBundle\Services\ImageHandler;
+use Uecode\Bundle\ImageBundle\Handler\ImageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Image manipulation service
  *
- * @author Gregwar <g.passault@gmail.com>
+ * Based on Gregwar's Image Repo
+ *
+ * @author Chris Moore <chrisamoore@gmail.com>
  */
 class ImageService
 {
     /**
-     * @var
+     * @var string $cacheDirectory
      */
     private $cacheDirectory;
 
     /**
-     * @var \Symfony\Component\DependencyInjection\ContainerInterface
+     * @var ContainerInterface
      */
     private $container;
 
     /**
-     * @var
+     * @var ImageHandler $handlerClass
      */
     private $handlerClass;
 
     /**
-     * @var \Symfony\Component\HttpKernel\KernelInterface
+     * @var KernelInterface $kernel
      */
     private $kernel;
 
     /**
-     * @var
+     * @var \Exception $thrownException
      */
     private $throwException;
 
-    public function __construct($cacheDirectory, $handlerClass, ContainerInterface $container, KernelInterface $kernel, $throwException)
-    {
+    public function __construct(
+        $cacheDirectory,
+        ImageHandler $handlerClass,
+        ContainerInterface $container,
+        KernelInterface $kernel,
+        $throwException
+    ) {
         $this->cacheDirectory = $cacheDirectory;
-        $this->handlerClass = $handlerClass;
-        $this->container = $container;
-        $this->kernel = $kernel;
+        $this->handlerClass   = $handlerClass;
+        $this->container      = $container;
+        $this->kernel         = $kernel;
         $this->throwException = $throwException;
     }
 
@@ -56,7 +83,7 @@ class ImageService
      */
     public function open($file)
     {
-        if (strlen($file)>=1 && $file[0] == '@') {
+        if (strlen($file) >= 1 && $file[0] === '@') {
             $file = $this->kernel->locateResource($file);
         }
 
@@ -66,33 +93,42 @@ class ImageService
     /**
      * Get a new image
      *
-     * @param $w the width
-     * @param $h the height
+     * @param integer $width  The width
+     * @param integer $height The height
      *
      * @return object a manipulable image instance
      */
-    public function create($w, $h)
+    public function create($width, $height)
     {
-        return $this->createInstance(null, $w, $h);
+        return $this->createInstance(null, $width, $height);
     }
 
     /**
      * Creates an instance defining the cache directory
+     *
+     * @param string       $file
+     * @param null|integer $width
+     * @param null|integer $height
+     *
+     * @return object
      */
-    private function createInstance($file, $w = null, $h = null)
+    private function createInstance($file, $width = null, $height = null)
     {
         $container = $this->container;
-        $webDir = $container->getParameter('gregwar_image.web_dir');
+        $webDir    = $container->getParameter('gregwar_image.web_dir');
 
         $handlerClass = $this->handlerClass;
-        $image = new $handlerClass($file, $w, $h, $this->throwException);
+        $image        = new $handlerClass($file, $width, $height, $this->throwException);
 
         $image->setCacheDir($this->cacheDirectory);
-        $image->setActualCacheDir($webDir.'/'.$this->cacheDirectory);
+        $image->setActualCacheDir($webDir . '/' . $this->cacheDirectory);
 
-        $image->setFileCallback(function($file) use ($container) {
-            return $container->get('templating.helper.assets')->getUrl($file);
-        });
+        $image->setFileCallback(
+            function ($file) use ($container) {
+                return $container->get('templating.helper.assets')
+                    ->getUrl($file);
+            }
+        );
 
         return $image;
     }
