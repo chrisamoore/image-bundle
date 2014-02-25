@@ -33,7 +33,8 @@
     "minimum-stability": "alpha",
     "autoload": {
         "psr-4": {
-            "Uecode\\Bundle\\ImageBundle\\": "src/"
+            "Uecode\\Bundle\\ImageBundle\\": "src/",
+            "Uecode\\Bundle\\ImageBundle\\Tests": "tests/"
         }
     }
 }
