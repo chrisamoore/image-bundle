@@ -15,17 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @package     image-bundle
+ * @package
  * @copyright   Underground Elephant 2014
  * @license     Apache License, Version 2.0
  */
 
-error_reporting(-1);
+namespace Uecode\Bundle\ImageBundle\Tests\Services;
 
-if (!file_exists(dirname(__DIR__) . '/composer.lock')) {
-    die( "Dependencies must be installed using composer:\n\nphp composer.phar install\n\n" .
-        "See http://getcomposer.org for help with installing composer\n" );
+/**
+ * Interface iServiceTest
+ *
+ * @package Uecode\Bundle\ImageBundle\Tests\Services
+ *
+ * @author  Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
+ */
+interface iServiceTest
+{
+    /**
+     * @return mixed
+     */
+    public function runTest();
 }
-
-$loader = require dirname(__DIR__) . '/vendor/autoload.php';
-$loader->addPsr4('Uecode\\Bundle\\ImageBundle\\tests\\', __DIR__);

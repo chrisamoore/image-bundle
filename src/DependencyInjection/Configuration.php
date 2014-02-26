@@ -55,8 +55,13 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('tmp_dir')
                     ->defaultValue('web/uploads/tmp')
                 ->end()
+                ->booleanNode('throw_exception')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('fallback_image')
+                    ->defaultValue(null)
+                ->end()
                 ->append($this->getS3Node())
-                ->append($this->getGregWarNode())
             ->end();
 
         return $treeBuilder;
@@ -86,33 +91,6 @@ class Configuration implements ConfigurationInterface
                             ->defaultFalse()
                         ->end()
                     ->end()
-                ->end()
-            ->end();
-
-        return $node;
-    }
-
-    /**
-     * @return ArrayNodeDefinition|NodeDefinition
-     */
-    public function getGregWarNode()
-    {
-        $treeBuilder = new TreeBuilder();
-        $node        = $treeBuilder->root('gregwar');
-
-        $node
-            ->children()
-                ->scalarNode('cache_dir')
-                    ->defaultValue('cache')
-                ->end()
-                ->booleanNode('throw_exception')
-                    ->defaultFalse()
-                ->end()
-                ->scalarNode('fallback_image')
-                    ->defaultValue(null)
-                ->end()
-                ->scalarNode('web_dir')
-                    ->defaultValue('%kernel.root_dir%/../web')
                 ->end()
             ->end();
 

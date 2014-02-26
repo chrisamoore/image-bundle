@@ -15,44 +15,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @package     image-bundle
+ * @package
  * @copyright   Underground Elephant 2014
  * @license     Apache License, Version 2.0
  */
 
 namespace Uecode\Bundle\ImageBundle\Tests\Services;
 
-use org\bovigo\vfs\vfsStream;
-use Uecode\Bundle\ImageBundle\Tests\Example;
+use Uecode\Bundle\ImageBundle\Services;
 
 /**
- * Class UploaderTest
+ * Class ImageHandlerTest
  *
- * @author Christopher A. Moore <chris.a.moore@gmail.com>
+ * @author Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
  */
-class UploaderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var  vfsStreamDirectory
-     */
-    private $root;
 
     /**
-     * set up test environmemt
+     * @param $name
+     * @param $object
      */
-    public function setUp()
+    public function instance($name, $object)
     {
-        $this->root = vfsStream::setup('exampleDir');
+        $this->assertInstanceOf($name, $object);
     }
 
     /**
-     * test that the directory is created
+     * @param array $attributes
+     * @param       $object
      */
-    public function testDirectoryIsCreated()
+    public function hasAttributes(array $attributes, $object)
     {
-        $example = new Example( 'id' );
-        $this->assertFalse($this->root->hasChild('id'));
-        $example->setDirectory(vfsStream::url('exampleDir'));
-        $this->assertTrue($this->root->hasChild('id'));
+        foreach ($attributes as $attribute) {
+            $this->assertObjectHasAttribute($attribute, $object);
+        }
     }
 }

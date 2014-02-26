@@ -17,7 +17,8 @@
         "php": ">=5.4.0",
         "ext-gd" : "*",
         "doctrine/common": ">2.4.0",
-        "gregwar/image": "dev-master"
+        "gregwar/image": "dev-master",
+        "mikey179/vfsStream": "dev-master"
     },
     "suggest": {
         "aws/aws-sdk-php": "Required to use S3",
@@ -33,7 +34,7 @@
     "autoload": {
         "psr-4": {
             "Uecode\\Bundle\\ImageBundle\\": "src/",
-            "Uecode\\Bundle\\ImageBundle\\Tests": "tests/"
+            "Uecode\\Bundle\\ImageBundle\\Tests\\": "tests/"
         }
     }
 }

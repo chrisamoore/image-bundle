@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "b1db2b85aead7fe6c017c4ad4216eec1",
+    "hash": "74777818ff98abeef593c270dd18c1ac",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -495,6 +495,44 @@
                 "image"
             ],
             "time": "2014-02-20 22:20:45"
+        },
+        {
+            "name": "mikey179/vfsStream",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikey179/vfsStream.git",
+                "reference": "8db0b72ee77fcc9a7380a4cf8ec396bdc70e255d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/8db0b72ee77fcc9a7380a4cf8ec396bdc70e255d",
+                "reference": "8db0b72ee77fcc9a7380a4cf8ec396bdc70e255d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "org\\bovigo\\vfs\\": "src/main/php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "homepage": "http://vfs.bovigo.org/",
+            "time": "2014-02-13 17:09:31"
         }
     ],
     "packages-dev": [
@@ -1356,7 +1394,8 @@
     ],
     "minimum-stability": "alpha",
     "stability-flags": {
-        "gregwar/image": 20
+        "gregwar/image": 20,
+        "mikey179/vfsstream": 20
     },
     "platform": {
         "php": ">=5.4.0",

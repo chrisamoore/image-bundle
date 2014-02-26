@@ -1,18 +1,16 @@
 parameters:
     uecode_image.handling.class: Uecode\Bundle\ImageBundle\Services\ImageService
-    uecode_image.handler.class: Uecode\Bundle\ImageBundle\Services\ImageHandler
+    uecode_image.handler.class: Uecode\Bundle\ImageBundle\Handler\ImageHandler
 
 services:
     # Image handling factory
     image.handling:
         class: %uecode_image.handling.class%
+        scope: request
         arguments:
-            - %uecode_image.gregwar.cache_dir%
             - %uecode_image.handler.class%
-            - @service_container
-            - @kernel
-            - %uecode_image.gregwar.throw_exception%
-            - %uecode_image.gregwar.fallback_image%
+            - %uecode_image.throw_exception%
+            - %uecode_image.fallback_image%
 
     uecode_image.upload_handler:
         class: Uecode\Bundle\ImageBundle\Services\UploadHandler
@@ -28,6 +26,6 @@ services:
 
     uecode_image.routing_loader:
         class: Uecode\Bundle\ImageBundle\Routing\RouteLoader
-        arguments: [ 'upload' , 'UecodeImageBundle:Uploader:Upload']
+        arguments: [ '%uecode_image.route%' , 'UecodeImageBundle:Uploader:Upload']
         tags:
             - { name: routing.loader }

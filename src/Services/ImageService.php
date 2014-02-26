@@ -22,66 +22,48 @@
 
 namespace Uecode\Bundle\ImageBundle\Services;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Templating\Helper\CoreAssetsHelper;
 use Uecode\Bundle\ImageBundle\Handler\ImageHandler;
 
 /**
  * Image manipulation service
- *
- * Based on Gregwar's Image Repo { https://github.com/Gregwar/Image }
  *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>
  */
 class ImageService
 {
     /**
-     * @var string $cacheDirectory
-     */
-    private $cacheDirectory;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var ImageHandler $handlerClass
      */
     private $handlerClass;
-
-    /**
-     * @var KernelInterface $kernel
-     */
-    private $kernel;
 
     /**
      * @var \Exception $thrownException
      */
     private $throwException;
 
+    /**
+     * @var string $fallbackImage
+     */
+    private $fallbackImage;
 
     /**
-     * @param                    $cacheDirectory
-     * @param                    $handlerClass
-     * @param ContainerInterface $container
-     * @param KernelInterface    $kernel
-     * @param                    $throwException
+     * @param $handlerClass
+     * @param $throwException
      *
-     * @TODO: Will not typehint $handlerClass Due to Dynamic creation inside might need a factory
+     * @param $fallbackImage
+     *
+     *
+     * @todo     : Will not typehint $handlerClass Due to Dynamic creation inside might need a factory
      */
     public function __construct(
-        $cacheDirectory,
-        $handlerClass, //
-        ContainerInterface $container,
-        KernelInterface $kernel,
-        $throwException
+        $handlerClass,
+        $throwException,
+        $fallbackImage
     ){
-        $this->cacheDirectory = $cacheDirectory;
         $this->handlerClass   = $handlerClass;
-        $this->container      = $container;
-        $this->kernel         = $kernel;
         $this->throwException = $throwException;
+        $this->fallbackImage  = $fallbackImage;
     }
 
     /**
@@ -89,7 +71,9 @@ class ImageService
      *
      * @param string $file the image path
      *
-     * @return object a manipulable image instance
+     * @return object a manipulable image instance available?
+     *
+     * @todo: Why is the Kernel available
      */
     public function open($file)
     {
@@ -98,19 +82,6 @@ class ImageService
         }
 
         return $this->createInstance($file);
-    }
-
-    /**
-     * Get a new image
-     *
-     * @param integer $width  The width
-     * @param integer $height The height
-     *
-     * @return object a manipulable image instance
-     */
-    public function create($width, $height)
-    {
-        return $this->createInstance(null, $width, $height);
     }
 
     /**
@@ -124,21 +95,8 @@ class ImageService
      */
     private function createInstance($file, $width = null, $height = null)
     {
-        $container = $this->container;
-        $webDir    = $container->getParameter('gregwar_image.web_dir');
-
         $handlerClass = $this->handlerClass;
-        $image        = new $handlerClass( $file, $width, $height, $this->throwException );
-
-        $image->setCacheDir($this->cacheDirectory);
-        $image->setActualCacheDir($webDir . '/' . $this->cacheDirectory);
-
-        $image->setFileCallback(
-              function ($file) use ($container){
-                  return $container->get('templating.helper.assets')
-                                   ->getUrl($file);
-              }
-        );
+        $image        = new $handlerClass( $file, $width, $height, $this->throwException, $this->fallbackImage );
 
         return $image;
     }

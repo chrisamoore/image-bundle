@@ -25,8 +25,8 @@ namespace Uecode\Bundle\ImageBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
@@ -54,11 +54,8 @@ class UecodeImageExtension extends Extension
         $container->setParameter('uecode_image.upload_dir', $config[ 'upload_dir' ]);
         $container->setParameter('uecode_image.tmp_dir', $config[ 'tmp_dir' ]);
         $container->setParameter('uecode_image.use_queue', $config[ 'use_queue' ]);
-
-        foreach ($config[ 'gregwar' ] as $key => $value) {
-            $container->setParameter('uecode_image.gregwar.' . $key, $value);
-            $container->setParameter('gregwar_image.' . $key, $value);
-        }
+        $container->setParameter('uecode_image.throw_exception', $config[ 'throw_exception' ]);
+        $container->setParameter('uecode_image.fallback_image', $config[ 'fallback_image' ]);
 
         $loader = new Loader\YamlFileLoader( $container, new FileLocator( __DIR__ . '/../Resources/config' ) );
 
