@@ -1,6 +1,6 @@
 ImageBundle
 ===========
-
+Add hipchat
 ####TODO:
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/uecode/image-bundle/badges/quality-score.png?s=4d2441bfa4e1e1c59c952fe671c1ffd372fe2925)](https://scrutinizer-ci.com/g/uecode/image-bundle/)
 
