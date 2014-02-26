@@ -24,7 +24,7 @@
         "uecode/qpush-bundle": "Required for Async Image Manipulation"
     },
     "require-dev": {
-        "symfony/symfony": "~2.3.*",
+        "symfony/symfony": "~2.3",
         "monolog/monolog": "~1.7.0",
         "phpunit/phpunit": "3.7.*",
         "aws/aws-sdk-php": "~2.5.2"
