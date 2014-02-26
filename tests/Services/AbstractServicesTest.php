@@ -47,8 +47,23 @@ abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
      */
     public function hasAttributes(array $attributes, $object)
     {
-        foreach ($attributes as $attribute) {
+        foreach ($attributes as $attribute => $value) {
             $this->assertObjectHasAttribute($attribute, $object);
+            $this->assertAttributeEquals($value, $attribute, $object);
+        }
+    }
+
+    /**
+     * @param array $methods
+     * @param       $object
+     */
+    public function hasMethods(array $methods, $object)
+    {
+        foreach ($methods as $method) {
+            $this->assertTrue(
+                 method_exists($object, $method),
+                     'Class does not have method '
+            );
         }
     }
 }

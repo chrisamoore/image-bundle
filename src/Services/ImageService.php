@@ -54,7 +54,6 @@ class ImageService
      * @param $fallbackImage
      *
      *
-     * @todo     : Will not typehint $handlerClass Due to Dynamic creation inside might need a factory
      */
     public function __construct(
         $handlerClass,
@@ -73,7 +72,6 @@ class ImageService
      *
      * @return object a manipulable image instance available?
      *
-     * @todo: Why is the Kernel available
      */
     public function open($file)
     {

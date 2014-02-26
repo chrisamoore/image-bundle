@@ -20,17 +20,18 @@
  * @license     Apache License, Version 2.0
  */
 
+namespace Uecode\Bundle\ImageBundle\Tests\Controller;
 
-namespace Uecode\Bundle\ImageBundle\Tests\Services;
-
-use Uecode\Bundle\ImageBundle\Services\ImageService;
+use Uecode\Bundle\ImageBundle\Controller\UploaderController;
+use Uecode\Bundle\ImageBundle\Tests\Services\AbstractServicesTest;
+use Uecode\Bundle\ImageBundle\Tests\Services\iServiceTest;
 
 /**
  * Class ImageServiceTest
  *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
  */
-class ImageServiceTest extends AbstractServicesTest implements iServiceTest
+class UploaderControllerTest extends AbstractServicesTest implements iServiceTest
 {
 
     /**
@@ -39,10 +40,7 @@ class ImageServiceTest extends AbstractServicesTest implements iServiceTest
     public function getObject()
     {
         return (object) [
-            'name'           => 'Uecode\\Bundle\\ImageBundle\\Services\\ImageService',
-            'handler'        => 'Uecode\\Bundle\\ImageBundle\\Handler\\ImageHandler',
-            'throwException' => true,
-            'fallbackImage'  => 'some.jpg'
+            'name'           => 'Uecode\\Bundle\\ImageBundle\\Controller\\UploaderController',
         ];
     }
 
@@ -50,21 +48,16 @@ class ImageServiceTest extends AbstractServicesTest implements iServiceTest
     public function runTest()
     {
         $construct = $this->getObject();
-
-        $object = new ImageService(
-            $construct->handler,
-            $construct->throwException,
-            $construct->fallbackImage
-        );
+        $object = new UploaderController;
 
         $attributes = [
-            'handlerClass'   => $construct->handler,
-            'throwException' => $construct->throwException,
-            'fallbackImage'  => $construct->fallbackImage
+//            'handlerClass'   => $construct->handler,
+//            'throwException' => $construct->throwException,
+//            'fallbackImage'  => $construct->fallbackImage
         ];
 
         $methods = [
-
+            'uploadAction'
         ];
 
         $this->instance($construct->name, $object);

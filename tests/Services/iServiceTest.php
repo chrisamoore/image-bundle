@@ -35,4 +35,9 @@ interface iServiceTest
      * @return mixed
      */
     public function runTest();
+
+    /**
+     * @return mixed
+     */
+    public function getObject();
 }
