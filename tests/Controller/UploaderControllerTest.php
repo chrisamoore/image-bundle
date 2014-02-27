@@ -51,9 +51,7 @@ class UploaderControllerTest extends AbstractServicesTest implements iServiceTes
         $object = new UploaderController;
 
         $attributes = [
-//            'handlerClass'   => $construct->handler,
-//            'throwException' => $construct->throwException,
-//            'fallbackImage'  => $construct->fallbackImage
+
         ];
 
         $methods = [

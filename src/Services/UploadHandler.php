@@ -60,11 +60,6 @@ class UploadHandler
     public $bucket;
 
     /**
-     * @var string $baseUrl
-     */
-    public $baseUrl;
-
-    /**
      * @var string $tmpDir
      */
     public $tmpDir;
@@ -112,12 +107,7 @@ class UploadHandler
     /**
      * @var string $name
      */
-    protected $name;
-
-    /**
-     * @var string $stuff
-     */
-    protected $stuff;
+    public $name;
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -153,6 +143,7 @@ class UploadHandler
         ( !$this->uploadDir ) ? : $this->makeDir($this->uploadDir);
 
         $files = $this->request->files->get('files');
+
         foreach ($files as $file) {
             $this->files[ $file->getClientOriginalName() ] = $file;
         }
@@ -202,7 +193,7 @@ class UploadHandler
     /**
      * Cleans out Tmp Dir
      */
-    protected function cleanTmp()
+    public function cleanTmp()
     {
         foreach (scandir($this->tmpDir . '/') as $file) {
             if ($file == '.' || $file == '..') {
@@ -308,9 +299,8 @@ class UploadHandler
         $this->s3        = $this->container->get('uecode_image.provider.aws');
         $this->bucket    = $this->container->getParameter('aws.s3.bucket');
         $this->directory = $this->container->getParameter('aws.s3.directory');
-        $this->baseUrl   = 'https://s3.amazonaws.com/';
         $this->location .=
-            $this->baseUrl .
+            'https://s3.amazonaws.com/' .
             DIRECTORY_SEPARATOR .
             $this->bucket .
             DIRECTORY_SEPARATOR .

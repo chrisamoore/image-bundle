@@ -64,7 +64,8 @@ class ImageServiceTest extends AbstractServicesTest implements iServiceTest
         ];
 
         $methods = [
-
+            'open',
+            'createInstance'
         ];
 
         $this->instance($construct->name, $object);

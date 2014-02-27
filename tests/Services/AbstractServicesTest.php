@@ -31,7 +31,6 @@ use Uecode\Bundle\ImageBundle\Services;
  */
 abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @param $name
      * @param $object
@@ -64,6 +63,17 @@ abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
                  method_exists($object, $method),
                      'Class does not have method '
             );
+        }
+    }
+
+    /**
+     * @param       $type
+     * @param array $array
+     */
+    public function arrayType($type, array $array)
+    {
+        foreach ($array as $key => $object) {
+            $this->assertInstanceOf($type, $object);
         }
     }
 }
