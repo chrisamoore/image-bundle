@@ -22,10 +22,12 @@
 
 namespace Uecode\Bundle\ImageBundle\Services;
 
+use Aws\Common\Aws;
 use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class UploaderHandler
@@ -70,12 +72,12 @@ class UploadHandler
     public $directory;
 
     /**
-     * @var string $uploadDir
+     * @var string|boolean $uploadDir
      */
     public $uploadDir;
 
     /**
-     * @var Request $request
+     * @var RequestStack $request
      */
     public $request;
 
@@ -100,9 +102,24 @@ class UploadHandler
     public $handler;
 
     /**
+     * @var \Aws\S3\S3Client $s3
+     */
+    public $s3;
+
+    /**
      * @var string $path
      */
-    protected $path;
+    public $path;
+
+    /**
+     * @var string $provider
+     */
+    public $provider;
+
+    /**
+     * @var \stdClass $meta
+     */
+    public $meta;
 
     /**
      * @var string $name
@@ -110,30 +127,36 @@ class UploadHandler
     public $name;
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \Symfony\Component\Filesystem\Filesystem  $filesystem
-     * @param                                           $rootDir
-     * @param                                           $tmpDir
-     * @param                                           $uploadDir
+     * @param \Symfony\Component\HttpFoundation\Request|\Symfony\Component\HttpFoundation\RequestStack $request
+     * @param \Symfony\Component\Filesystem\Filesystem                                                 $filesystem
+     * @param                                                                                          $rootDir
+     * @param                                                                                          $tmpDir
+     * @param                                                                                          $uploadDir
      *
-     * @param ImageService                              $handler
-     * @param                                           $provider
+     * @param ImageService                                                                             $handler
+     * @param                                                                                          $provider
+     *
+     * @param                                                                                          $s3Client
+     * @param                                                                                          $bucket
+     * @param                                                                                          $directory
      *
      * @todo Inject Model
      */
     public function __construct(
-        Request $request,
+        RequestStack $request,
         Filesystem $filesystem,
         $rootDir,
         $tmpDir,
         $uploadDir,
         ImageService $handler,
-        $provider
+        $provider,
+        $s3Client,
+        $bucket,
+        $directory
     ){
-        $this->request    = $request;
+        $this->request    = $request->getCurrentRequest();
         $this->fileSystem = $filesystem;
-        $this->root       = $rootDir;
-        $this->path       = $this->root . '/../web' . DIRECTORY_SEPARATOR . 'bundles/uecode_image/';
+        $this->path       = $rootDir . '/../web' . DIRECTORY_SEPARATOR . 'bundles/uecode_image/';
         $this->tmpDir     = $this->path . $tmpDir;
         $this->uploadDir  = ( !$uploadDir ) ? false : $this->path . $uploadDir;
         $this->handler    = $handler;
@@ -156,6 +179,7 @@ class UploadHandler
 
         $this->moveToFileSystem($this->file, $this->tmpDir);
         $this->localFile = $this->tmpDir . DIRECTORY_SEPARATOR . $this->name;
+        $this->initS3($s3Client, $bucket, $directory);
 
         return $this;
     }
@@ -165,6 +189,7 @@ class UploadHandler
      */
     public function upload()
     {
+        $data = [];
         $data[ 'ops' ] = $this->handleOperations($this->operations);
 
         // grab all files in tmp dir and upload to each location
@@ -204,7 +229,7 @@ class UploadHandler
     }
 
     /**
-     * @param $operations
+     * @param string $operations
      *
      * @return array
      */
@@ -239,25 +264,32 @@ class UploadHandler
                     break;
             }
             $file->save($this->tmpDir . DIRECTORY_SEPARATOR . $opName . $this->name, 'jpg', 100);
+            $ops = [];
             $ops[ $opName ] = $this->toUrl($opName . $this->name);
         }
         return $ops;
     }
 
     /**
-     * @param string      $file
-     * @param string      $path
-     * @param null|string $filename
+     * @param string $file
+     * @param string $path
+     *
+     * @internal param null|string $filename
      *
      * @return string
      */
-    protected function moveToFileSystem($file, $path, $filename = null)
+    protected function moveToFileSystem($file, $path)
     {
         $this->fileSystem->copy($file, $path . DIRECTORY_SEPARATOR . $this->name);
 
         return $this->toUrl($this->name);
     }
 
+    /**
+     * @param string $filename
+     *
+     * @return string
+     */
     public function toUrl($filename)
     {
         $parts = explode('/uecode_image/', $this->uploadDir);
@@ -294,11 +326,11 @@ class UploadHandler
     /**
      * Sets up S3
      */
-    protected function initS3()
+    protected function initS3($s3Client, $bucket, $directory)
     {
-        $this->s3        = $this->container->get('uecode_image.provider.aws');
-        $this->bucket    = $this->container->getParameter('aws.s3.bucket');
-        $this->directory = $this->container->getParameter('aws.s3.directory');
+        $this->s3 = $s3Client;
+        $this->bucket = $bucket;
+        $this->directory = $directory;
         $this->location .=
             'https://s3.amazonaws.com/' .
             DIRECTORY_SEPARATOR .
@@ -309,24 +341,19 @@ class UploadHandler
     }
 
     /**
-     *
-     * @param string  $filepath
-     * @param Request $request
+     * @param string $filepath
      *
      * @return string
      */
-    protected function handleS3Upload($filepath, Request $request)
+    protected function handleS3Upload($filepath)
     {
-        $this->initS3();
         try{
-            $uploaded = $this->s3->putObject(
-                                 [
-                                     'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
-                                     'Key'    => $this->name,
-                                     'Body'   => fopen($filepath, 'r'),
-                                     'ACL'    => 'public-read',
-                                 ]
-            );
+            $uploaded = $this->s3->putObject([
+                 'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
+                 'Key'    => $this->name,
+                 'Body'   => fopen($filepath, 'r'),
+                 'ACL'    => 'public-read',
+             ]);
 
             return $uploaded[ 'ObjectURL' ];
         }catch (S3Exception $e){
@@ -341,8 +368,7 @@ class UploadHandler
      */
     public function name($file)
     {
-        $ext  = $file->guessExtension();
-        $hash = md5(uniqid(time() . '_' . mt_rand(1, posix_times()[ 'ticks' ]) . '_')) . '.' . $ext;
+        $hash = md5(uniqid(time() . '_' . mt_rand(1, posix_times()[ 'ticks' ]) . '_')) . '.';
         return $hash;
     }
 }

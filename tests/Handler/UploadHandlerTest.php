@@ -25,6 +25,7 @@ namespace Uecode\Bundle\ImageBundle\Tests\Handler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Uecode\Bundle\ImageBundle\Services\ImageService;
 use Uecode\Bundle\ImageBundle\Services\UploadHandler;
 use Uecode\Bundle\ImageBundle\Tests\Services\AbstractServicesTest;
@@ -100,15 +101,21 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
         $request->files->add([ 'files' => [ $this->image ] ]);
         $request->attributes->add([ 'operations' => $json ]);
 
+        $stack = new RequestStack();
+        $stack->push($request);
+
         return (object) [
             'name'       => 'Uecode\\Bundle\\ImageBundle\\Services\\UploadHandler',
-            'request'    => $request,
+            'request'    => $stack,
             'fileSystem' => new Filesystem,
             'rootDir'    => '/vagrant/Symfony',
             'tmpDir'     => 'tmp',
             'uploadDir'  => 'upload',
             'handler'    => $imgService,
-            'provider'   => 'local'
+            'provider'   => 'local',
+            's3' => false,
+            'bucket' => 'bucket',
+            'directory' => 'directory'
         ];
     }
 
@@ -124,11 +131,13 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
             $construct->tmpDir,
             $construct->uploadDir,
             $construct->handler,
-            $construct->provider
+            $construct->provider,
+            $construct->s3,
+            $construct->bucket,
+            $construct->directory
         );
 
         $attributes = [
-            'root'      => '/vagrant/Symfony',
             'path'      => '/vagrant/Symfony/../web/bundles/uecode_image/',
             'tmpDir'    => '/vagrant/Symfony/../web/bundles/uecode_image/tmp',
             'uploadDir' => '/vagrant/Symfony/../web/bundles/uecode_image/upload',

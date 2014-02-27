@@ -22,7 +22,6 @@
 
 namespace Uecode\Bundle\ImageBundle\Services;
 
-use Symfony\Component\Templating\Helper\CoreAssetsHelper;
 use Uecode\Bundle\ImageBundle\Handler\ImageHandler;
 
 /**

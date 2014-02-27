@@ -27,7 +27,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -61,8 +60,9 @@ class UecodeImageExtension extends Extension
 
         $loader->load('services.yml');
 
+        $this->createAwsClient($container->getParameter('aws.s3'), $container);
+
         if ($container->getParameter('aws.s3')[ 'enabled' ]) {
-            $this->createAwsClient($container->getParameter('aws.s3'), $container);
             $container->setParameter('uecode_image.provider', 's3');
         }else {
             $container->setParameter('uecode_image.provider', 'local');

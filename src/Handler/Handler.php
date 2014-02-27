@@ -22,8 +22,6 @@
 
 namespace Uecode\Bundle\ImageBundle\Handler;
 
-use Gregwar\Image\Image;
-
 /**
  * Interface ImageHandler
  *
@@ -37,6 +35,7 @@ interface Handler
      * @param integer $height
      * @param Boolean $throwException
      * @param string  $fallbackImage
+     * @return void
      */
     public function __construct($originalFile, $width, $height, $throwException, $fallbackImage);
 
@@ -44,6 +43,7 @@ interface Handler
      * Defines the callback to call to compute the new filename
      *
      * @param \Closure $fileCallback
+     * @return void
      */
     public function setFileCallback($fileCallback);
 

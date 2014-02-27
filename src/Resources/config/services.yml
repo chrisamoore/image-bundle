@@ -6,7 +6,7 @@ services:
     # Image handling factory
     image.handling:
         class: %uecode_image.handling.class%
-        scope: request
+        scope: request_stack
         arguments:
             - %uecode_image.handler.class%
             - %uecode_image.throw_exception%
@@ -14,7 +14,7 @@ services:
 
     uecode_image.upload_handler:
         class: Uecode\Bundle\ImageBundle\Services\UploadHandler
-        scope: request
+        scope: request_stack
         arguments:
             - @request
             - @filesystem
@@ -23,6 +23,9 @@ services:
             - %uecode_image.upload_dir%
             - @image.handling
             - %uecode_image.provider%
+            - @uecode_image.provider.aws
+            - %aws.s3.bucket%
+            - %aws.s3.directory%
 
     uecode_image.routing_loader:
         class: Uecode\Bundle\ImageBundle\Routing\RouteLoader

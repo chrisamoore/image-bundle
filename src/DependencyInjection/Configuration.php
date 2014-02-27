@@ -68,7 +68,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @return ArrayNodeDefinition|NodeDefinition
+     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
      */
     private function getS3Node()
     {
