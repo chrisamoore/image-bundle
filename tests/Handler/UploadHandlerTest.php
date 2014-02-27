@@ -51,7 +51,7 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
 
         $this->file = tempnam('/tmp', 'test'); // create file
 
-        $name = explode('/', $this->file);
+        $name           = explode('/', $this->file);
         $this->fileName = end($name);
 
         $this->image = new UploadedFile(
@@ -59,7 +59,7 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
             $this->fileName
         );
 
-        $json = '{
+        $json    = '{
                   "operations": [
                     {
                       "resize": {
@@ -97,18 +97,18 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
                   }
                 }';
         $request = new Request();
-        $request->files->add(['files' => [$this->image]]);
-        $request->attributes->add(['operations' => $json]);
+        $request->files->add([ 'files' => [ $this->image ] ]);
+        $request->attributes->add([ 'operations' => $json ]);
 
         return (object) [
-            'name' => 'Uecode\\Bundle\\ImageBundle\\Services\\UploadHandler',
-            'request' => $request,
+            'name'       => 'Uecode\\Bundle\\ImageBundle\\Services\\UploadHandler',
+            'request'    => $request,
             'fileSystem' => new Filesystem,
-            'rootDir' => '/vagrant/Symfony',
-            'tmpDir' => 'tmp',
-            'uploadDir' => 'upload',
-            'handler' => $imgService,
-            'provider' => 'local'
+            'rootDir'    => '/vagrant/Symfony',
+            'tmpDir'     => 'tmp',
+            'uploadDir'  => 'upload',
+            'handler'    => $imgService,
+            'provider'   => 'local'
         ];
     }
 
@@ -128,11 +128,11 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
         );
 
         $attributes = [
-            'root' => '/vagrant/Symfony',
-            'path' => '/vagrant/Symfony/../web/bundles/uecode_image/',
-            'tmpDir' => '/vagrant/Symfony/../web/bundles/uecode_image/tmp',
-            'uploadDir' =>  '/vagrant/Symfony/../web/bundles/uecode_image/upload',
-            'provider' => 'local',
+            'root'      => '/vagrant/Symfony',
+            'path'      => '/vagrant/Symfony/../web/bundles/uecode_image/',
+            'tmpDir'    => '/vagrant/Symfony/../web/bundles/uecode_image/tmp',
+            'uploadDir' => '/vagrant/Symfony/../web/bundles/uecode_image/upload',
+            'provider'  => 'local',
         ];
 
         $methods = [
@@ -149,23 +149,22 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
             'name'
         ];
 
-        $this->assertEquals(20, $object->operations[0]->resize->width);
-        $this->assertEquals(20, $object->operations[0]->resize->height);
-        $this->assertEquals(90, $object->operations[0]->rotate->degrees);
-        $this->assertEquals(0, $object->operations[0]->crop->x);
-        $this->assertEquals(0, $object->operations[0]->crop->y);
-        $this->assertEquals(10, $object->operations[0]->crop->w);
-        $this->assertEquals(10, $object->operations[0]->crop->h);
+        $this->assertEquals(20, $object->operations[ 0 ]->resize->width);
+        $this->assertEquals(20, $object->operations[ 0 ]->resize->height);
+        $this->assertEquals(90, $object->operations[ 0 ]->rotate->degrees);
+        $this->assertEquals(0, $object->operations[ 0 ]->crop->x);
+        $this->assertEquals(0, $object->operations[ 0 ]->crop->y);
+        $this->assertEquals(10, $object->operations[ 0 ]->crop->w);
+        $this->assertEquals(10, $object->operations[ 0 ]->crop->h);
 
-        $this->assertEquals(20, $object->operations[1]->resize->width);
-        $this->assertEquals(20, $object->operations[1]->resize->height);
+        $this->assertEquals(20, $object->operations[ 1 ]->resize->width);
+        $this->assertEquals(20, $object->operations[ 1 ]->resize->height);
 
         $this->assertEquals("pun.jpg", $object->meta->name);
         $this->assertEquals(1, $object->meta->user->company);
         $this->assertEquals(1, $object->meta->user->id);
 
-
-        $this->assertTrue( (boolean) preg_match('/' . $object->name . '/', $object->localFile));
+        $this->assertTrue((boolean) preg_match('/' . $object->name . '/', $object->localFile));
         $this->assertInstanceOf('Symfony\\Component\\Filesystem\\Filesystem', $object->fileSystem);
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Request', $object->request);
         $this->assertInstanceOf('Uecode\\Bundle\\ImageBundle\\Services\\ImageService', $object->handler);
@@ -174,6 +173,7 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
         $this->instance($construct->name, $object);
         $this->hasAttributes($attributes, $object);
         $this->hasMethods($methods, $object);
+
 
         $object->cleanTmp();
     }

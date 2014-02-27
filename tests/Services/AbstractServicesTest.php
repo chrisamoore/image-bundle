@@ -22,6 +22,8 @@
 
 namespace Uecode\Bundle\ImageBundle\Tests\Services;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Translation\Loader\LoaderInterface;
 use Uecode\Bundle\ImageBundle\Services;
 
 /**
@@ -75,5 +77,16 @@ abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
         foreach ($array as $key => $object) {
             $this->assertInstanceOf($type, $object);
         }
+    }
+
+    /**
+     * @param        $endpoint
+     * @param null   $test
+     * @param string $method
+     */
+    public function route($route, $controller, $loaderClass)
+    {
+        $loader = new $loaderClass($route, $controller);
+        return $loader;
     }
 }
