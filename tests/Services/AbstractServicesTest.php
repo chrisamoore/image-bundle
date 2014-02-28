@@ -29,6 +29,8 @@ use Uecode\Bundle\ImageBundle\Services;
 /**
  * Class ImageHandlerTest
  *
+ * @codeCoverageIgnore
+ *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
  */
 abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
@@ -80,13 +82,42 @@ abstract class AbstractServicesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param        $endpoint
-     * @param null   $test
-     * @param string $method
+     * @param $route
+     * @param $controller
+     * @param $loaderClass
+     *
+     * @return
+     * @internal param $endpoint
+     * @internal param null $test
+     * @internal param string $method
      */
     public function route($route, $controller, $loaderClass)
     {
         $loader = new $loaderClass($route, $controller);
+
         return $loader;
+    }
+
+    /**
+     * getFile
+     *
+     * @param type
+     *
+     * @return [object]
+     * @throws exceptionclass [description]
+     *
+     * @access public
+     *
+     * @author Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
+     */
+    public function getFile()
+    {
+        $file = tempnam('/tmp', 'test'); // create file
+        $name = explode('/', $file);
+        $filename = end($name) . '.jpg';
+        return (object) [
+            'location' => '/tmp/' . $filename,
+            'name' => $filename
+        ];
     }
 }

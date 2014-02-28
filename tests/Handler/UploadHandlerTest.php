@@ -104,10 +104,12 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
         $stack = new RequestStack();
         $stack->push($request);
 
+        $filesystem = $this->getMock('Symfony\\Component\\Filesystem\\Filesystem');
+
         return (object) [
             'name'       => 'Uecode\\Bundle\\ImageBundle\\Services\\UploadHandler',
             'request'    => $stack,
-            'fileSystem' => new Filesystem,
+            'fileSystem' => $filesystem,
             'rootDir'    => '/vagrant/Symfony',
             'tmpDir'     => 'tmp',
             'uploadDir'  => 'upload',
@@ -183,7 +185,11 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
         $this->hasAttributes($attributes, $object);
         $this->hasMethods($methods, $object);
 
+//        $data = $object->upload();
+//        var_dump($data);die;
 
-        $object->cleanTmp();
+        $this->assertTrue($object->cleanTmp());
+//        $this->assertEquals($this->fileName, $object->name($object->request->files->get('files')->originalName));
+        $this->assertEquals('http:///bundles/uecode_image/upload/foo', $object->toUrl('foo'));
     }
 }

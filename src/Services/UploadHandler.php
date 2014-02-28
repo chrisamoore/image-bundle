@@ -27,6 +27,7 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -127,7 +128,7 @@ class UploadHandler
     public $name;
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request|\Symfony\Component\HttpFoundation\RequestStack $request
+     * @param RequestStack $request
      * @param \Symfony\Component\Filesystem\Filesystem                                                 $filesystem
      * @param                                                                                          $rootDir
      * @param                                                                                          $tmpDir
@@ -210,7 +211,6 @@ class UploadHandler
                     break;
             }
         }
-        $this->cleanTmp();
 
         return $data;
     }
@@ -226,6 +226,7 @@ class UploadHandler
             }
             unlink($this->tmpDir . DIRECTORY_SEPARATOR . $file);
         }
+        return true;
     }
 
     /**
@@ -264,6 +265,7 @@ class UploadHandler
                     break;
             }
             $file->save($this->tmpDir . DIRECTORY_SEPARATOR . $opName . $this->name, 'jpg', 100);
+
             $ops = [];
             $ops[ $opName ] = $this->toUrl($opName . $this->name);
         }
@@ -366,9 +368,10 @@ class UploadHandler
      *
      * @return string
      */
-    public function name($file)
+    public function name( UploadedFile $file)
     {
-        $hash = md5(uniqid(time() . '_' . mt_rand(1, posix_times()[ 'ticks' ]) . '_')) . '.';
+        $ext  = $file->guessExtension();
+        $hash = md5(uniqid(time() . '_' . mt_rand(1, posix_times()[ 'ticks' ]) . '_')) . '.' . $ext;
         return $hash;
     }
 }

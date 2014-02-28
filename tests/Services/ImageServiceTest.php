@@ -71,5 +71,8 @@ class ImageServiceTest extends AbstractServicesTest implements iServiceTest
         $this->instance($construct->name, $object);
         $this->hasAttributes($attributes, $object);
         $this->hasMethods($methods, $object);
+
+        $file = $object->open($this->getFile()->name);
+        $this->instance('Uecode\\Bundle\\ImageBundle\\Handler\\ImageHandler', $file);
     }
 }

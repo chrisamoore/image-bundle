@@ -22,6 +22,7 @@
 
 namespace Uecode\Bundle\ImageBundle\Tests\Routing;
 
+use Symfony\Component\Config\Loader\LoaderResolver;
 use Uecode\Bundle\ImageBundle\Tests\Services\AbstractServicesTest;
 use Uecode\Bundle\ImageBundle\Tests\Services\iServiceTest;
 
@@ -95,5 +96,9 @@ class RouteLoaderTest extends AbstractServicesTest implements iServiceTest
             $this->assertEquals('POST', $route->getRequirements()['_method']);
             $this->assertEquals('Uecode\Bundle\ImageBundle\Controller\UploaderController', $route->getDefaults()['_controller']);
         }
+
+        $this->assertNull($object->getResolver());
+        $this->assertNull($object->setResolver(new LoaderResolver([])));
+        $this->assertFalse($object->supports($construct->controller));
     }
 }
