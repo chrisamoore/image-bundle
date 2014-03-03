@@ -41,6 +41,6 @@ class UploaderController extends Controller
         $uploader = $this->container->get('uecode_image.upload_handler');
         $data     = $uploader->upload();
 
-        return new JsonResponse( $data );
+        return new JsonResponse($data);
     }
 }

@@ -28,6 +28,7 @@ use Aws\S3\S3Client;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -78,7 +79,7 @@ class UploadHandler
     public $uploadDir;
 
     /**
-     * @var RequestStack $request
+     * @var Request $request
      */
     public $request;
 
@@ -90,7 +91,7 @@ class UploadHandler
     /**
      * @var array $files
      */
-    public $files = [ ];
+    public $files = [];
 
     /**
      * @var string $localFile
@@ -128,7 +129,7 @@ class UploadHandler
     public $name;
 
     /**
-     * @param RequestStack $request
+     * @param \Symfony\Component\HttpFoundation\Request|\Symfony\Component\HttpFoundation\RequestStack $request
      * @param \Symfony\Component\Filesystem\Filesystem                                                 $filesystem
      * @param                                                                                          $rootDir
      * @param                                                                                          $tmpDir
@@ -144,7 +145,7 @@ class UploadHandler
      * @todo Inject Model
      */
     public function __construct(
-        RequestStack $request,
+        Request $request,
         Filesystem $filesystem,
         $rootDir,
         $tmpDir,
@@ -155,24 +156,24 @@ class UploadHandler
         $bucket,
         $directory
     ){
-        $this->request    = $request->getCurrentRequest();
+        $this->request    = $request;
         $this->fileSystem = $filesystem;
         $this->path       = $rootDir . '/../web' . DIRECTORY_SEPARATOR . 'bundles/uecode_image/';
         $this->tmpDir     = $this->path . $tmpDir;
-        $this->uploadDir  = ( !$uploadDir ) ? false : $this->path . $uploadDir;
+        $this->uploadDir  = (!$uploadDir) ? false : $this->path . $uploadDir;
         $this->handler    = $handler;
         $this->provider   = $provider;
 
         $this->makeDir($this->tmpDir);
-        ( !$this->uploadDir ) ? : $this->makeDir($this->uploadDir);
+        (!$this->uploadDir) ? : $this->makeDir($this->uploadDir);
 
         $files = $this->request->files->get('files');
 
         foreach ($files as $file) {
-            $this->files[ $file->getClientOriginalName() ] = $file;
+            $this->files[$file->getClientOriginalName()] = $file;
         }
 
-        $this->file       = $this->files[ $files[ 0 ]->getClientOriginalName() ];
+        $this->file       = $this->files[$files[0]->getClientOriginalName()];
         $operations       = json_decode($this->request->get('operations'));
         $this->meta       = $operations->meta;
         $this->operations = $operations->operations;
@@ -181,8 +182,6 @@ class UploadHandler
         $this->moveToFileSystem($this->file, $this->tmpDir);
         $this->localFile = $this->tmpDir . DIRECTORY_SEPARATOR . $this->name;
         $this->initS3($s3Client, $bucket, $directory);
-
-        return $this;
     }
 
     /**
@@ -191,11 +190,10 @@ class UploadHandler
      */
     public function upload()
     {
-        $data = [];
-        $data[ 'ops' ] = $this->handleOperations($this->operations);
-
+        $this->handleOperations($this->operations);
+        $data        = [];
         // grab all files in tmp dir and upload to each location
-        $files = preg_grep('/' . explode('.', $this->name)[ 0 ] . '/', scandir($this->tmpDir . '/'));
+        $files = preg_grep('/' . explode('.', $this->name)[0] . '/', scandir($this->tmpDir . '/'));
 
         foreach ($files as $file) {
             $file     = $this->tmpDir . DIRECTORY_SEPARATOR . $file;
@@ -204,20 +202,20 @@ class UploadHandler
 
             switch ($this->provider) {
                 case 's3':
-                    $data[ 's3' ] = $this->handleS3Upload($file, $this->request);
+                    $data['s3'][$filename] = $this->handleS3Upload($file, $this->request);
                     break;
                 case 'local':
                     $this->fileSystem->copy($file, $this->uploadDir . DIRECTORY_SEPARATOR . $filename);
-                    $data[ 'local' ] = $this->url() . $filename;
+                    $data['local'][$filename] = $this->url() . $filename;
                     break;
             }
         }
-
         return $data;
     }
 
     /**
      * Cleans out Tmp Dir
+     *
      * @codeCoverageIgnore
      */
     public function cleanTmp()
@@ -239,20 +237,23 @@ class UploadHandler
      */
     protected function handleOperations($operations)
     {
+        $ops = [];
         foreach ($operations as $operation) {
-            $ops[ ] = $this->doOperation($operation);
+            $ops[] = $this->doOperation($operation);
         }
         return $ops;
     }
 
     /**
      * Interprets Gregwar Image API
+     *
      * @codeCoverageIgnore
      */
     protected function doOperation($operation)
     {
         $file   = $this->handler->open($this->localFile);
         $opName = 'n/a';
+        $ops    = [];
         foreach ($operation as $op => $params) {
             switch ($op) {
                 case 'resize':
@@ -270,8 +271,8 @@ class UploadHandler
             }
             $file->save($this->tmpDir . DIRECTORY_SEPARATOR . $opName . $this->name, 'jpg', 100);
 
-            $ops = [];
-            $ops[ $opName ] = $this->toUrl($opName . $this->name);
+            $ops          = [];
+            $ops[$opName] = $this->toUrl($opName . $this->name);
         }
         return $ops;
     }
@@ -309,7 +310,7 @@ class UploadHandler
      */
     protected function url()
     {
-        $url = ( $this->request->isSecure() ) ? 'https://' : 'http://';
+        $url = ($this->request->isSecure()) ? 'https://' : 'http://';
         $url .= $this->request->getBaseUrl() . $this->request->getHost();
         $url .= '/bundles/uecode_image/';
         return $url;
@@ -317,6 +318,7 @@ class UploadHandler
 
     /**
      * @param string $dir
+     *
      * @codeCoverageIgnore
      */
     protected function makeDir($dir)
@@ -332,12 +334,13 @@ class UploadHandler
 
     /**
      * Sets up S3
+     *
      * @codeCoverageIgnore
      */
     protected function initS3($s3Client, $bucket, $directory)
     {
-        $this->s3 = $s3Client;
-        $this->bucket = $bucket;
+        $this->s3        = $s3Client;
+        $this->bucket    = $bucket;
         $this->directory = $directory;
         $this->location .=
             'https://s3.amazonaws.com/' .
@@ -357,14 +360,16 @@ class UploadHandler
     protected function handleS3Upload($filepath)
     {
         try{
-            $uploaded = $this->s3->putObject([
-                 'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
-                 'Key'    => $this->name,
-                 'Body'   => fopen($filepath, 'r'),
-                 'ACL'    => 'public-read',
-             ]);
+            $uploaded = $this->s3->putObject(
+                                 [
+                                     'Bucket' => $this->bucket . DIRECTORY_SEPARATOR . $this->directory,
+                                     'Key'    => $this->name,
+                                     'Body'   => fopen($filepath, 'r'),
+                                     'ACL'    => 'public-read',
+                                 ]
+            );
 
-            return $uploaded[ 'ObjectURL' ];
+            return $uploaded['ObjectURL'];
         }catch (S3Exception $e){
             echo "There was an error uploading the file.\n";
         }
@@ -375,10 +380,10 @@ class UploadHandler
      *
      * @return string
      */
-    public function name( UploadedFile $file)
+    public function name(UploadedFile $file)
     {
         $ext  = $file->guessExtension();
-        $hash = md5(uniqid(time() . '_' . mt_rand(1, posix_times()[ 'ticks' ]) . '_')) . '.' . $ext;
+        $hash = md5(uniqid(time() . '_' . mt_rand(1, posix_times()['ticks']) . '_')) . '.' . $ext;
         return $hash;
     }
 }

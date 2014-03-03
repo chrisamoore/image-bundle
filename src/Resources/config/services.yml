@@ -6,7 +6,7 @@ services:
     # Image handling factory
     image.handling:
         class: %uecode_image.handling.class%
-        scope: request_stack
+        scope: request
         arguments:
             - %uecode_image.handler.class%
             - %uecode_image.throw_exception%
@@ -14,7 +14,7 @@ services:
 
     uecode_image.upload_handler:
         class: Uecode\Bundle\ImageBundle\Services\UploadHandler
-        scope: request_stack
+        scope: request
         arguments:
             - @request
             - @filesystem

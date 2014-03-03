@@ -76,7 +76,7 @@ class ImageService
     public function open($file)
     {
         if (strlen($file) >= 1 && $file[ 0 ] === '@') {
-            $file = $this->kernel->locateResource($file);
+            // $file = $this->kernel->locateResource($file); // Uh is the kernel in here ?
         }
 
         return $this->createInstance($file);

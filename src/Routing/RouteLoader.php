@@ -35,6 +35,15 @@ use Symfony\Component\Routing\RouteCollection;
 class RouteLoader implements LoaderInterface
 {
     /**
+     * @var string $route
+     */
+    public $route;
+
+    /**
+     * @var string $controller
+     */
+    public $controller;
+    /**
      * @var Boolean $loaded
      */
     private $loaded = false;
