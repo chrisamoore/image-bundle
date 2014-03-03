@@ -191,5 +191,6 @@ class UploadHandlerTest extends AbstractServicesTest implements iServiceTest
         $this->assertTrue($object->cleanTmp());
 //        $this->assertEquals($this->fileName, $object->name($object->request->files->get('files')->originalName));
         $this->assertEquals('http:///bundles/uecode_image/upload/foo', $object->toUrl('foo'));
+
     }
 }

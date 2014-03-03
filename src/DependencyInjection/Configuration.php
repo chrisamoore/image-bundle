@@ -29,6 +29,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  * Class Configuration
  *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>
+ * @codeCoverageIgnore
  */
 class Configuration implements ConfigurationInterface
 {

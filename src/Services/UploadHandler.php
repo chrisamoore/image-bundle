@@ -187,6 +187,7 @@ class UploadHandler
 
     /**
      * @return mixed
+     * @codeCoverageIgnore
      */
     public function upload()
     {
@@ -217,6 +218,7 @@ class UploadHandler
 
     /**
      * Cleans out Tmp Dir
+     * @codeCoverageIgnore
      */
     public function cleanTmp()
     {
@@ -233,6 +235,7 @@ class UploadHandler
      * @param string $operations
      *
      * @return array
+     * @codeCoverageIgnore
      */
     protected function handleOperations($operations)
     {
@@ -244,6 +247,7 @@ class UploadHandler
 
     /**
      * Interprets Gregwar Image API
+     * @codeCoverageIgnore
      */
     protected function doOperation($operation)
     {
@@ -313,6 +317,7 @@ class UploadHandler
 
     /**
      * @param string $dir
+     * @codeCoverageIgnore
      */
     protected function makeDir($dir)
     {
@@ -327,6 +332,7 @@ class UploadHandler
 
     /**
      * Sets up S3
+     * @codeCoverageIgnore
      */
     protected function initS3($s3Client, $bucket, $directory)
     {
@@ -346,6 +352,7 @@ class UploadHandler
      * @param string $filepath
      *
      * @return string
+     * @codeCoverageIgnore
      */
     protected function handleS3Upload($filepath)
     {
@@ -364,7 +371,7 @@ class UploadHandler
     }
 
     /**
-     * @param string $file
+     * @param string|\Symfony\Component\HttpFoundation\File\UploadedFile $file
      *
      * @return string
      */

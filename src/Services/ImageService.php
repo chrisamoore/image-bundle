@@ -71,6 +71,7 @@ class ImageService
      *
      * @return object a manipulable image instance available?
      *
+     * @codeCoverageIgnore
      */
     public function open($file)
     {

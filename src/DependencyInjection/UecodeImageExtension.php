@@ -34,6 +34,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>
  * @author Aaron Scherer <aequasi@gmail.com>
+ *
+ * @codeCoverageIgnore
  */
 class UecodeImageExtension extends Extension
 {

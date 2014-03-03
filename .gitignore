@@ -1,2 +1,4 @@
 vendor
 src/Resources/config/parameters.yml
+report/*
+.idea/*

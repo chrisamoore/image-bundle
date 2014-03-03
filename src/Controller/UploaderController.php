@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Class UploaderController
  *
  * @author Christopher A. Moore <chris.a.moore@gmail.com>, <cmoore@undergroundelephant.com>
+ * @codeCoverageIgnore
  */
 class UploaderController extends Controller
 {

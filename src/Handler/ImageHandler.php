@@ -30,6 +30,8 @@ use Gregwar\Image\Image;
  * Based on Gregwar's Image Repository
  *
  * @author Aaron Scherer <aequasi@gmail.com>
+ *
+ * @codeCoverageIgnore
  */
 class ImageHandler extends Image implements Handler
 {
@@ -41,7 +43,7 @@ class ImageHandler extends Image implements Handler
     /**
      * {@inheritDoc}
      */
-    public function __construct($originalFile, $width, $height, $throwException, $fallbackImage)
+    public function __construct($originalFile, $width, $height, $throwException = null, $fallbackImage = null)
     {
         $this->useFallback(!$throwException);
         $this->setFallback($fallbackImage);
